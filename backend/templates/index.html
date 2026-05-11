@@ -579,266 +579,266 @@
   </div>
 
   <script>
-    const fileInput = document.getElementById("fileInput");
-    const uploadBtn = document.getElementById("uploadBtn");
-    const errorEl = document.getElementById("error");
-    const resultsEl = document.getElementById("results");
-    const emptyStateEl = document.getElementById("emptyState");
-    const depWeatherCard = document.getElementById("depWeatherCard");
-    const destWeatherCard = document.getElementById("destWeatherCard");
-    const altWeatherCard = document.getElementById("altWeatherCard");
-    const detailsGrid = document.getElementById("detailsGrid");
-    const statusPill = document.getElementById("statusPill");
-    const statusCopy = document.getElementById("statusCopy");
+  const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const errorEl = document.getElementById("error");
+  const resultsEl = document.getElementById("results");
+  const emptyStateEl = document.getElementById("emptyState");
+  const depWeatherCard = document.getElementById("depWeatherCard");
+  const destWeatherCard = document.getElementById("destWeatherCard");
+  const altWeatherCard = document.getElementById("altWeatherCard");
+  const detailsGrid = document.getElementById("detailsGrid");
+  const statusPill = document.getElementById("statusPill");
+  const statusCopy = document.getElementById("statusCopy");
 
-    const summaryFlight = document.getElementById("summaryFlight");
-    const summaryDate = document.getElementById("summaryDate");
-    const summaryRoute = document.getElementById("summaryRoute");
-    const summaryAirports = document.getElementById("summaryAirports");
-    const summarySchedule = document.getElementById("summarySchedule");
-    const summaryDuration = document.getElementById("summaryDuration");
-    const summaryAircraft = document.getElementById("summaryAircraft");
-    const summaryOps = document.getElementById("summaryOps");
-    const summaryScheduleLocal = document.getElementById("summaryScheduleLocal");
-    const summaryOfp = document.getElementById("summaryOfp");
-    const summaryFlightTime = document.getElementById("summaryFlightTime");
+  const summaryFlight = document.getElementById("summaryFlight");
+  const summaryDate = document.getElementById("summaryDate");
+  const summaryRoute = document.getElementById("summaryRoute");
+  const summaryAirports = document.getElementById("summaryAirports");
+  const summarySchedule = document.getElementById("summarySchedule");
+  const summaryScheduleLocal = document.getElementById("summaryScheduleLocal");
+  const summaryOfp = document.getElementById("summaryOfp");
+  const summaryFlightTime = document.getElementById("summaryFlightTime");
+  const summaryAircraft = document.getElementById("summaryAircraft");
+  const summaryOps = document.getElementById("summaryOps");
 
-    function safeValue(value, fallback = "—") {
-      if (value === undefined || value === null || value === "") {
-        return fallback;
-      }
-      return value;
+  function safeValue(value, fallback = "—") {
+    if (value === undefined || value === null || value === "") {
+      return fallback;
     }
-
-    function formatFlightTime(value) {
-  const raw = safeValue(value, "").toString().trim();
-
-  if (!raw) {
-    return "—";
+    return value;
   }
 
-  const match = raw.match(/^(\d{1,2}):(\d{2})$/);
-  if (!match) {
-    return raw;
+  function formatFlightTime(value) {
+    const raw = safeValue(value, "").toString().trim();
+
+    if (!raw) {
+      return "—";
+    }
+
+    const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) {
+      return raw;
+    }
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+
+    return `${hours}h ${minutes}m`;
   }
 
-  const hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
+  function joinParts(parts, separator = " · ") {
+    return parts.filter(Boolean).join(separator) || "—";
+  }
 
-  return `${hours}h ${minutes}m`;
-}
+  function resetUI() {
+    errorEl.textContent = "";
+    resultsEl.style.display = "none";
+    emptyStateEl.style.display = "grid";
+    detailsGrid.innerHTML = "";
+    depWeatherCard.innerHTML = "";
+    destWeatherCard.innerHTML = "";
+    altWeatherCard.innerHTML = "";
 
-    function joinParts(parts, separator = " · ") {
-      return parts.filter(Boolean).join(separator) || "—";
-    }
+    summaryFlight.textContent = "—";
+    summaryDate.textContent = "—";
+    summaryRoute.textContent = "—";
+    summaryAirports.textContent = "—";
+    summarySchedule.textContent = "—";
+    summaryScheduleLocal.textContent = "—";
+    summaryOfp.textContent = "—";
+    summaryFlightTime.textContent = "—";
+    summaryAircraft.textContent = "—";
+    summaryOps.textContent = "—";
+  }
 
-    function resetUI() {
-      errorEl.textContent = "";
-      resultsEl.style.display = "none";
-      emptyStateEl.style.display = "grid";
-      detailsGrid.innerHTML = "";
-      depWeatherCard.innerHTML = "";
-      destWeatherCard.innerHTML = "";
-      altWeatherCard.innerHTML = "";
+  function createDataItem(label, value) {
+    const item = document.createElement("div");
+    item.className = "data-item";
 
-      summaryFlight.textContent = "—";
-      summaryDate.textContent = "—";
-      summaryRoute.textContent = "—";
-      summaryAirports.textContent = "—";
-      summarySchedule.textContent = "—";
-      summaryDuration.textContent = "—";
-      summaryAircraft.textContent = "—";
-      summaryOps.textContent = "—";
-      summaryScheduleLocal.textContent = "—";
-      summaryOfp.textContent = "—";
-      summaryFlightTime.textContent = "—";
-    }
+    const labelEl = document.createElement("div");
+    labelEl.className = "data-label";
+    labelEl.textContent = label;
 
-    function createDataItem(label, value) {
-      const item = document.createElement("div");
-      item.className = "data-item";
+    const valueEl = document.createElement("div");
+    valueEl.className = "data-value";
+    valueEl.textContent = safeValue(value);
 
-      const labelEl = document.createElement("div");
-      labelEl.className = "data-label";
-      labelEl.textContent = label;
+    item.appendChild(labelEl);
+    item.appendChild(valueEl);
 
-      const valueEl = document.createElement("div");
-      valueEl.className = "data-value";
-      valueEl.textContent = safeValue(value);
+    return item;
+  }
 
-      item.appendChild(labelEl);
-      item.appendChild(valueEl);
+  function renderSummary(strip) {
+    summaryFlight.textContent = joinParts([
+      safeValue(strip.commercial_flight, "").trim(),
+      safeValue(strip.atc_flight, "").trim()
+    ], " / ");
 
-      return item;
-    }
+    summaryDate.textContent = safeValue(strip.date_of_flight);
 
-    function renderSummary(strip) {
-  summaryFlight.textContent = joinParts([
-    safeValue(strip.commercial_flight, "").trim(),
-    safeValue(strip.atc_flight, "").trim()
-  ], " / ");
+    summaryRoute.textContent = joinParts([
+      strip.dep_iata || strip.dep_icao,
+      strip.dest_iata || strip.dest_icao
+    ], " → ");
 
-  summaryDate.textContent = safeValue(strip.date_of_flight);
+    summaryAirports.textContent = joinParts([
+      safeValue(strip.dep_rwy, "").trim() ? `DEP RWY ${strip.dep_rwy}` : "",
+      safeValue(strip.arr_rwy, "").trim() ? `ARR RWY ${strip.arr_rwy}` : ""
+    ]);
 
-  summaryRoute.textContent = joinParts([
-    strip.dep_iata || strip.dep_icao,
-    strip.dest_iata || strip.dest_icao
-  ], " → ");
+    summarySchedule.textContent = joinParts([
+      safeValue(strip.std_utc, "").trim() ? `STD ${strip.std_utc}` : "",
+      safeValue(strip.sta_utc, "").trim() ? `STA ${strip.sta_utc}` : ""
+    ]);
 
-  summaryAirports.textContent = joinParts([
-    safeValue(strip.dep_rwy, "").trim() ? `DEP RWY ${strip.dep_rwy}` : "",
-    safeValue(strip.arr_rwy, "").trim() ? `ARR RWY ${strip.arr_rwy}` : ""
-  ]);
+    summaryScheduleLocal.textContent = joinParts([
+      safeValue(strip.std_local, "").trim() ? `Local STD ${strip.std_local}` : "",
+      safeValue(strip.sta_local, "").trim() ? `Local STA ${strip.sta_local}` : ""
+    ]);
 
-  summarySchedule.textContent = joinParts([
-    safeValue(strip.std_utc, "").trim() ? `STD ${strip.std_utc}` : "",
-    safeValue(strip.sta_utc, "").trim() ? `STA ${strip.sta_utc}` : ""
-  ]);
+    summaryOfp.textContent = safeValue(strip.ofp_version);
+    summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
 
-  summaryScheduleLocal.textContent = joinParts([
-    safeValue(strip.std_local, "").trim() ? `Local STD ${strip.std_local}` : "",
-    safeValue(strip.sta_local, "").trim() ? `Local STA ${strip.sta_local}` : ""
-  ]);
+    summaryAircraft.textContent = safeValue(strip.reg);
+    summaryOps.textContent = joinParts([
+      safeValue(strip.engine_type, "").trim() ? `Engine ${strip.engine_type}` : ""
+    ]);
+  }
 
-  summaryOfp.textContent = safeValue(strip.ofp_version);
-  summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
+  function renderDetails(strip) {
+    detailsGrid.innerHTML = "";
 
-  summaryAircraft.textContent = safeValue(strip.reg);
-  summaryOps.textContent = joinParts([
-    safeValue(strip.engine_type, "").trim() ? `Engine ${strip.engine_type}` : ""
-  ]);
-}
+    const fields = [
+      ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
+      ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
+      ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
+      ["Flight level range", joinParts([
+        safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
+        safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
+      ])],
+      ["Cost index", strip.cost_index],
+      ["Ramp fuel", strip.ramp_fuel],
+      ["EZFW", strip.ezfw],
+      ["ETOW", strip.etow],
+      ["ELWT", strip.elwt],
+      ["Max Shear Rate", strip.max_shear_rate],
+      ["Highest MORA", strip.highest_mora]
+    ];
 
-    function renderDetails(strip) {
-  detailsGrid.innerHTML = "";
+    fields.forEach(([label, value]) => {
+      detailsGrid.appendChild(createDataItem(label, value));
+    });
+  }
 
-  const fields = [
-    ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
-    ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
-    ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
-    ["Flight level range", joinParts([
-      safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
-      safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
-    ])],
-    ["Cost index", strip.cost_index],
-    ["Ramp fuel", strip.ramp_fuel],
-    ["EZFW", strip.ezfw],
-    ["ETOW", strip.etow],
-    ["ELWT", strip.elwt]
-  ];
+  function renderWeatherCard(el, titleText, wx) {
+    el.innerHTML = "";
 
-  fields.forEach(([label, value]) => {
-    detailsGrid.appendChild(createDataItem(label, value));
-  });
-}
-
-    function renderWeatherCard(el, titleText, wx) {
-      el.innerHTML = "";
-
-      if (!wx) {
-        el.innerHTML = `
-          <div class="weather-top">
-            <div>
-              <div class="weather-code">${titleText}</div>
-              <div class="weather-station">No weather data</div>
-            </div>
-          </div>
-          <div class="weather-window">No weather information was returned for this station.</div>
-        `;
-        return;
-      }
-
-      const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
-
+    if (!wx) {
       el.innerHTML = `
         <div class="weather-top">
           <div>
             <div class="weather-code">${titleText}</div>
-            <div class="weather-station">${safeValue(wx.name)}</div>
+            <div class="weather-station">No weather data</div>
           </div>
-          <div class="weather-code">${joinParts([wx.iata, wx.icao], " / ")}</div>
         </div>
-        <div class="weather-window">${safeValue(wx.window_label, "Weather window not available.")}</div>
-        <div class="wx-block">
-          <div class="wx-label">METAR</div>
-          <div class="wx-value">${safeValue(wx.metar, "(none)")}</div>
-        </div>
-        <div class="wx-block">
-          <div class="wx-label">TAF</div>
-          <div class="wx-value">${tafText || "(none)"}</div>
-        </div>
+        <div class="weather-window">No weather information was returned for this station.</div>
       `;
+      return;
     }
 
-    uploadBtn.addEventListener("click", async () => {
-      errorEl.textContent = "";
-      resultsEl.style.display = "none";
-      emptyStateEl.style.display = "grid";
-      detailsGrid.innerHTML = "";
-      depWeatherCard.innerHTML = "";
-      destWeatherCard.innerHTML = "";
-      altWeatherCard.innerHTML = "";
+    const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
 
-      const file = fileInput.files[0];
+    el.innerHTML = `
+      <div class="weather-top">
+        <div>
+          <div class="weather-code">${titleText}</div>
+          <div class="weather-station">${safeValue(wx.name)}</div>
+        </div>
+        <div class="weather-code">${joinParts([wx.iata, wx.icao], " / ")}</div>
+      </div>
+      <div class="weather-window">${safeValue(wx.window_label, "Weather window not available.")}</div>
+      <div class="wx-block">
+        <div class="wx-label">METAR</div>
+        <div class="wx-value">${safeValue(wx.metar, "(none)")}</div>
+      </div>
+      <div class="wx-block">
+        <div class="wx-label">TAF</div>
+        <div class="wx-value">${tafText || "(none)"}</div>
+      </div>
+    `;
+  }
 
-      if (!file) {
-        errorEl.textContent = "Please choose a PDF file first.";
-        return;
+  uploadBtn.addEventListener("click", async () => {
+    errorEl.textContent = "";
+    resultsEl.style.display = "none";
+    emptyStateEl.style.display = "grid";
+    detailsGrid.innerHTML = "";
+    depWeatherCard.innerHTML = "";
+    destWeatherCard.innerHTML = "";
+    altWeatherCard.innerHTML = "";
+
+    const file = fileInput.files[0];
+
+    if (!file) {
+      errorEl.textContent = "Please choose a PDF file first.";
+      return;
+    }
+
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Generating...";
+    statusPill.textContent = "Awaiting document";
+    statusCopy.textContent = "Upload an OFP PDF to generate a structured briefing with flight overview, routing, aircraft details, and available weather sections.";
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/briefing", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Server error ${res.status}: ${text}`);
       }
 
-      uploadBtn.disabled = true;
-      uploadBtn.textContent = "Generating...";
-      statusPill.textContent = "Awaiting document";
-      statusCopy.textContent = "Upload an OFP PDF to generate a structured briefing with flight overview, routing, aircraft details, and available weather sections.";
+      const data = await res.json();
+      const strip = data.strip || {};
 
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
+      const availableSections = [
+        strip && Object.keys(strip).length ? "flight details" : "",
+        data.dep_weather ? "departure weather" : "",
+        data.dest_weather ? "destination weather" : "",
+        data.alt_weather ? "alternate weather" : ""
+      ].filter(Boolean);
 
-        const res = await fetch("/api/briefing", {
-          method: "POST",
-          body: formData
-        });
+      statusCopy.textContent = availableSections.length
+        ? `This briefing includes ${availableSections.join(", ")}.`
+        : "The document was processed, but only limited briefing data was available.";
 
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Server error ${res.status}: ${text}`);
-        }
+      renderSummary(strip);
+      renderDetails(strip);
+      renderWeatherCard(depWeatherCard, "Departure weather", data.dep_weather);
+      renderWeatherCard(destWeatherCard, "Destination weather", data.dest_weather);
+      renderWeatherCard(altWeatherCard, "Alternate weather", data.alt_weather);
 
-        const data = await res.json();
-        const strip = data.strip || {};
+      emptyStateEl.style.display = "none";
+      resultsEl.style.display = "grid";
+      statusPill.textContent = "Brief ready";
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = err.message;
+      statusPill.textContent = "Error";
+    } finally {
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = "Generate Brief";
+    }
+  });
 
-        const availableSections = [
-          strip && Object.keys(strip).length ? "flight details" : "",
-          data.dep_weather ? "departure weather" : "",
-          data.dest_weather ? "destination weather" : "",
-          data.alt_weather ? "alternate weather" : ""
-        ].filter(Boolean);
-
-        statusCopy.textContent = availableSections.length
-          ? `This briefing includes ${availableSections.join(", ")}.`
-          : "The document was processed, but only limited briefing data was available.";
-
-        renderSummary(strip);
-        renderDetails(strip);
-        renderWeatherCard(depWeatherCard, "Departure weather", data.dep_weather);
-        renderWeatherCard(destWeatherCard, "Destination weather", data.dest_weather);
-        renderWeatherCard(altWeatherCard, "Alternate weather", data.alt_weather);
-
-        emptyStateEl.style.display = "none";
-        resultsEl.style.display = "grid";
-        statusPill.textContent = "Brief ready";
-      } catch (err) {
-        console.error(err);
-        errorEl.textContent = err.message;
-        statusPill.textContent = "Error";
-      } finally {
-        uploadBtn.disabled = false;
-        uploadBtn.textContent = "Generate Brief";
-      }
-    });
-
-    resetUI();
-  </script>
+  resetUI();
+</script>
 </body>
 </html>

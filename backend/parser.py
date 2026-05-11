@@ -465,6 +465,69 @@ def parse_ofp_version(text_norm: str) -> str:
     m = re.search(r"\bOFP:(\d+)", text_norm)
     return m.group(1) if m else ""
 
+def parse_max_sr_and_mora(text_norm: str) -> tuple[str, str]:
+    lines = text_norm.splitlines()
+
+    in_fp = False
+    max_sr = -1
+    max_mora = -1
+
+    skip_names = {"PAGE", "DP", "AFTER"}
+
+    for raw_line in lines:
+        line = raw_line.strip()
+
+        if not in_fp:
+            if "WPT ITT SR/TDEV MORA" in line:
+                in_fp = True
+            continue
+
+        if "ROUTE TO DESTINATION ALTERNATE" in line:
+            break
+
+        if not line or line.startswith(("AWY", "WPT", "---", "***", "----------")):
+            continue
+
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+
+        waypoint_name = parts[0]
+        if waypoint_name in skip_names:
+            continue
+
+        print(f"DEBUG Waypoint: {waypoint_name} | Line: {line}")
+
+        sr_idx = None
+
+        for i, token in enumerate(parts):
+            if re.fullmatch(r"\d{2}/[PM]\d{2,3}", token):
+                sr_val = int(token.split("/", 1)[0])
+                print(f"  SR: {sr_val}")
+                max_sr = max(max_sr, sr_val)
+                sr_idx = i
+                break
+
+        if sr_idx is not None:
+            if sr_idx + 1 < len(parts) and re.fullmatch(r"\d{1,3}", parts[sr_idx + 1]):
+                mora_val = int(parts[sr_idx + 1])
+                print(f"  MORA: {mora_val}")
+                max_mora = max(max_mora, mora_val)
+        else:
+            for i, token in enumerate(parts):
+                if re.fullmatch(r"/[PM]\d{2,3}", token):
+                    if i + 1 < len(parts) and re.fullmatch(r"\d{1,3}", parts[i + 1]):
+                        mora_val = int(parts[i + 1])
+                        print(f"  MORA: {mora_val}")
+                        max_mora = max(max_mora, mora_val)
+                    break
+
+    final_sr = f"{max_sr:02d}" if max_sr >= 0 else ""
+    final_mora = str(max_mora) if max_mora >= 0 else ""
+    print(f"FINAL Max SR='{final_sr}' Max MORA='{final_mora}'")
+
+    return final_sr, final_mora
+
 
 # ---------------------------------------------------------------------------
 # Weather: TAF periods and windows
@@ -774,6 +837,7 @@ def parse_briefing(path: str) -> Briefing:
     fl_min, fl_max, ci = parse_fl_and_ci(text_norm)
     ramp, ezfw, etow, elwt = parse_weights_and_fuel(text_norm)
     ofp_version = parse_ofp_version(text_norm)
+    max_sr, highest_mora = parse_max_sr_and_mora(text_norm)
 
     strip = FlightStrip(
         commercial_flight=commercial,
@@ -793,6 +857,8 @@ def parse_briefing(path: str) -> Briefing:
         ramp_fuel=ramp,
         ezfw=ezfw, etow=etow, elwt=elwt,
         date_of_flight=date_of_flight,
+        max_shear_rate=max_sr,
+        highest_mora=highest_mora,
     )
 
     metars, tafs = parse_weather_blocks(text)

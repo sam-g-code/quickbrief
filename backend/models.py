@@ -33,6 +33,8 @@ class FlightStrip:
     ezfw: str
     etow: str
     elwt: str
+    max_shear_rate: str = ""
+    highest_mora: str = ""
 
 
 @dataclass
