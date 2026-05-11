@@ -732,6 +732,27 @@
     });
   }
 
+  function formatTafLines(taf) {
+    if (!taf) {
+      return "(none)";
+    }
+
+    const raw = Array.isArray(taf) ? taf.join(" ") : String(taf);
+    const cleaned = raw.replace(/\s+/g, " ").trim();
+
+    if (!cleaned) {
+      return "(none)";
+    }
+
+    return cleaned
+      .replace(/\s+(FT\b)/g, "\n$1")
+      .replace(/\s+(FM\d{4,6}\b)/g, "\n$1")
+      .replace(/\s+(BECMG\b)/g, "\n$1")
+      .replace(/\s+(TEMPO\b)/g, "\n$1")
+      .replace(/\s+(PROB\d{2}\b)/g, "\n$1")
+      .trim();
+  }
+
   function renderWeatherCard(el, titleText, wx) {
     el.innerHTML = "";
 
@@ -748,7 +769,7 @@
       return;
     }
 
-    const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
+    const tafText = formatTafLines(wx.taf);
 
     el.innerHTML = `
       <div class="weather-top">
