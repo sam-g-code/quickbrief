@@ -1,0 +1,15 @@
+QUICKBRIEF/
+├── .venv/
+├── backend/
+│   ├── __pycache__/
+│   ├── sample_ofp/
+│   │   └── example.pdf
+│   ├── templates/
+│   │   └── index.html
+│   ├── airports.dat
+│   ├── app.py
+│   ├── models.py
+│   ├── parser.py
+│   ├── weather_parser.py
+│   └── notam_parser.py
+└── TXT Files/
