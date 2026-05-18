@@ -46,6 +46,28 @@ class AirportWeather:
     metar: str
     taf: List[str]
 
+@dataclass
+class NotamEntry:
+    notam_id: str
+    category: str
+    validity: str
+    raw_text: str
+    source_airport_icao: str
+    source_airport_iata: str
+    source_airport_name: str
+    importance: str = "unknown"
+    importance_score: int = 0
+    importance_reasons: List[str] | None = None
+
+
+@dataclass
+class AirportNotamSection:
+    airport_icao: str
+    airport_iata: str
+    airport_name: str
+    section_title: str
+    entries: List[NotamEntry]
+
 
 @dataclass
 class Briefing:
@@ -53,3 +75,6 @@ class Briefing:
     dep_weather: AirportWeather
     dest_weather: AirportWeather
     alt_weather: AirportWeather
+    dep_notams: List[NotamEntry]
+    dest_notams: List[NotamEntry]
+    alt_notams: List[NotamEntry]

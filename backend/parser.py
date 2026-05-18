@@ -1,25 +1,22 @@
+# parser.py
 from __future__ import annotations
 
 import math
 import re
-from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import NamedTuple
+from datetime import datetime, timedelta
 
 from pypdf import PdfReader
 
 from models import FlightStrip, AirportWeather, Briefing
-from airport_utils import ICAO_TIMEZONES, format_airport_from_icao
-from time_utils import (
-    MONTH_MAP, fmt_hhmm, utc_to_local_hhmm,
-    times_to_datetimes, _to_naive_utc,
-)
+from airport_utils import format_airport_from_icao
+from time_utils import MONTH_MAP, fmt_hhmm, utc_to_local_hhmm, times_to_datetimes
 from taf_utils import filter_taf_window
 from weather_parser import (
     parse_weather_blocks,
     pick_metar_taf_for_airport,
     compact_taf_for_window,
 )
+from notams_parser import parse_notam_sections, filter_important_notams
 
 
 # ---------------------------------------------------------------------------
@@ -266,22 +263,21 @@ def parse_briefing(path: str) -> Briefing:
     (dest_iata, dest_icao, dest_name), \
     (alt_iata, alt_icao, alt_name) = parse_airports(text_norm)
 
-    for icao, name_var, iata_var in [
-        (dep_icao, "dep_name", "dep_iata"),
-        (dest_icao, "dest_name", "dest_iata"),
-        (alt_icao, "alt_name", "alt_iata"),
-    ]:
+    for icao in [dep_icao, dest_icao, alt_icao]:
         if icao:
             db_name, _, db_iata = format_airport_from_icao(icao)
             if icao == dep_icao:
                 dep_name = db_name or dep_name
-                if db_iata: dep_iata = db_iata
+                if db_iata:
+                    dep_iata = db_iata
             elif icao == dest_icao:
                 dest_name = db_name or dest_name
-                if db_iata: dest_iata = db_iata
+                if db_iata:
+                    dest_iata = db_iata
             else:
                 alt_name = db_name or alt_name
-                if db_iata: alt_iata = db_iata
+                if db_iata:
+                    alt_iata = db_iata
 
     std_utc, std_local, sta_utc, sta_local, flight_time = parse_times(
         text_norm, dep_icao, dest_icao, dof_dt
@@ -357,9 +353,35 @@ def parse_briefing(path: str) -> Briefing:
     else:
         alt_taf_filtered = filter_taf_window(alt_taf_all, std_dt, sta_dt, dof_dt, "alt")
 
+    all_notam_sections = parse_notam_sections(text)
+
+    dep_icao = strip.dep_icao
+    dest_icao = strip.dest_icao
+    alt_icao = strip.alt_icao
+
+    filtered_notam_sections = filter_important_notams(
+        airport_sections=all_notam_sections,
+        dep_icao=dep_icao,
+        dest_icao=dest_icao,
+        alt_icao=alt_icao,
+        std_dt=std_dt,
+        sta_dt=sta_dt,
+    )
+
+    dep_section = next((s for s in filtered_notam_sections if s.airport_icao == dep_icao), None)
+    dest_section = next((s for s in filtered_notam_sections if s.airport_icao == dest_icao), None)
+    alt_section = next((s for s in filtered_notam_sections if s.airport_icao == alt_icao), None)
+
+    dep_notams = dep_section.entries if dep_section else []
+    dest_notams = dest_section.entries if dest_section else []
+    alt_notams = alt_section.entries if alt_section else []
+
     return Briefing(
         strip=strip,
         dep_weather=AirportWeather(dep_icao, dep_iata, dep_name, format_window_label("dep"), dep_metar, dep_taf_filtered),
         dest_weather=AirportWeather(dest_icao, dest_iata, dest_name, format_window_label("arr"), dest_metar, dest_taf_filtered),
         alt_weather=AirportWeather(alt_icao, alt_iata, alt_name, format_window_label("alt"), alt_metar, alt_taf_filtered),
+        dep_notams=dep_notams,
+        dest_notams=dest_notams,
+        alt_notams=alt_notams,
     )

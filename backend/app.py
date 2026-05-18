@@ -3,9 +3,13 @@ from dataclasses import asdict
 import os
 import tempfile
 
+import notams_parser
+print("APP IMPORTING NOTAMS FROM:", notams_parser.__file__)
+
 from parser import parse_briefing
 
 app = Flask(__name__)
+
 
 @app.route("/", methods=["GET"])
 def index():
