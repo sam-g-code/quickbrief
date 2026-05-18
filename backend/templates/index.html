@@ -7,519 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f4f1ea;
-      --surface: rgba(255, 255, 255, 0.78);
-      --surface-strong: rgba(255, 255, 255, 0.92);
-      --border: rgba(15, 23, 42, 0.08);
-      --text: #172033;
-      --muted: #667085;
-      --accent: #0f766e;
-      --accent-dark: #0b5e58;
-      --danger: #b42318;
-      --warning: #b45309;
-      --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-pill: 999px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 30%),
-        radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 28%),
-        linear-gradient(180deg, #f8f6f1 0%, #f1eee7 100%);
-      min-height: 100vh;
-      padding: 24px;
-    }
-
-    .page {
-      max-width: 1360px;
-      margin: 0 auto;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
-      border: 1px solid rgba(255,255,255,0.7);
-      box-shadow: var(--shadow);
-      border-radius: 32px;
-      padding: 22px 24px;
-      backdrop-filter: blur(14px);
-      margin-bottom: 28px;
-    }
-
-    .hero-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), #123c62);
-      display: grid;
-      place-items: center;
-      color: white;
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      box-shadow: 0 12px 24px rgba(15, 118, 110, 0.22);
-    }
-
-    .brand-name {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .meta-chip {
-      background: rgba(255,255,255,0.8);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: var(--radius-pill);
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
-    }
-
-    .upload-panel {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .upload-card,
-    .status-card,
-    .section-card,
-    .weather-card,
-    .notam-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-    }
-
-    .upload-card,
-    .status-card,
-    .section-card {
-      padding: 22px;
-    }
-
-    .status-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .upload-title,
-    .status-title,
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin: 0 0 8px;
-    }
-
-    .upload-subtitle,
-    .status-copy,
-    .section-subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .upload-row {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .file-wrap {
-      flex: 1;
-      min-width: 240px;
-    }
-
-    .file-wrap input[type="file"] {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px dashed rgba(15, 23, 42, 0.14);
-      border-radius: 16px;
-      background: rgba(255,255,255,0.72);
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    button {
-      border: none;
-      border-radius: var(--radius-pill);
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: #ffffff;
-      padding: 14px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      box-shadow: 0 14px 28px rgba(15, 118, 110, 0.24);
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: default;
-      transform: none;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      border-radius: var(--radius-pill);
-      padding: 9px 12px;
-      background: rgba(15, 118, 110, 0.09);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .error {
-      margin-top: 14px;
-      color: var(--danger);
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
-
-    .results {
-      display: none;
-      gap: 24px;
-      margin-top: 28px;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .summary-card {
-      background: var(--surface-strong);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 14px 12px;
-      min-height: 88px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-    }
-
-    .summary-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .summary-value {
-      font-size: 18px;
-      line-height: 1.1;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
-      word-break: break-word;
-    }
-
-    .summary-sub {
-      font-size: 12px;
-      line-height: 1.35;
-      color: var(--muted);
-      word-break: break-word;
-    }
-
-    .details-layout {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 18px;
-    }
-
-    .data-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .data-item {
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 92px;
-    }
-
-    .data-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .data-value {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.45;
-      word-break: break-word;
-    }
-
-    .weather-stack {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .weather-card {
-      padding: 18px;
-      background: rgba(255,255,255,0.8);
-    }
-
-    .weather-top,
-    .notam-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .weather-station,
-    .notam-station {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .weather-code,
-    .notam-code {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-
-    .weather-window {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-      white-space: pre-wrap;
-    }
-
-    .wx-block {
-      padding-top: 12px;
-      border-top: 1px solid rgba(15, 23, 42, 0.08);
-      margin-top: 12px;
-    }
-
-    .wx-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .wx-value {
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .notam-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .notam-card {
-      padding: 18px;
-      background: rgba(255,255,255,0.8);
-      min-height: 220px;
-    }
-
-    .notam-empty {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .notam-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .notam-item {
-      background: var(--surface-strong);
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .notam-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .notam-badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: var(--radius-pill);
-      padding: 5px 9px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      background: rgba(15, 23, 42, 0.06);
-      color: var(--text);
-    }
-
-    .notam-badge.critical {
-      background: rgba(180, 35, 24, 0.10);
-      color: var(--danger);
-    }
-
-    .notam-badge.important {
-      background: rgba(180, 83, 9, 0.10);
-      color: var(--warning);
-    }
-
-    .notam-text {
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .empty-state {
-      display: grid;
-      place-items: center;
-      min-height: 300px;
-      text-align: center;
-      padding: 40px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-    }
-
-    .empty-state h2 {
-      margin: 0 0 8px;
-      font-size: 26px;
-      letter-spacing: -0.03em;
-    }
-
-    .empty-state p {
-      margin: 0;
-      max-width: 46ch;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    @media (max-width: 1100px) {
-      .upload-panel,
-      .details-layout,
-      .notam-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 720px) {
-      body {
-        padding: 14px;
-      }
-
-      .hero {
-        padding: 16px;
-        border-radius: 24px;
-        margin-bottom: 18px;
-      }
-
-      .hero-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .data-grid,
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-card,
-      .section-card,
-      .weather-card,
-      .notam-card,
-      .upload-card,
-      .status-card {
-        border-radius: 18px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <div class="page">
@@ -552,15 +40,13 @@
 
         <div class="status-card">
           <div>
-            <div class="eyebrow">Document status</div>
-            <h2 class="status-title">Brief readiness</h2>
+            <div class="eyebrow">Warning</div>
+            <h2 class="status-title">Operational use notice</h2>
             <p class="status-copy" id="statusCopy">
-              Upload an OFP PDF to generate a structured briefing with flight overview, routing, aircraft details,
-              weather sections, and important NOTAMs when available.
+              This page is for information only. Always refer to the full briefing package for complete operational information.
             </p>
           </div>
-
-          <div class="status-pill" id="statusPill">Awaiting document</div>
+          <div class="status-pill" id="statusPill">Information only</div>
         </div>
       </div>
     </section>
@@ -618,6 +104,14 @@
         </article>
 
         <article class="section-card">
+          <div class="eyebrow">Dispatch</div>
+          <h2 class="section-title">Dispatch briefing notes</h2>
+          <p class="section-subtitle">Lines captured between the driftdown weight line and crew notes.</p>
+
+          <div class="data-grid" id="dispatchNotesGrid"></div>
+        </article>
+
+        <article class="section-card">
           <div class="eyebrow">Weather</div>
           <h2 class="section-title">Station weather</h2>
           <p class="section-subtitle">Departure, destination, and alternate weather blocks.</p>
@@ -657,6 +151,7 @@
     const destNotamsCard = document.getElementById("destNotamsCard");
     const altNotamsCard = document.getElementById("altNotamsCard");
     const detailsGrid = document.getElementById("detailsGrid");
+    const dispatchNotesGrid = document.getElementById("dispatchNotesGrid");
     const statusPill = document.getElementById("statusPill");
     const statusCopy = document.getElementById("statusCopy");
 
@@ -705,6 +200,7 @@
       resultsEl.style.display = "none";
       emptyStateEl.style.display = "grid";
       detailsGrid.innerHTML = "";
+      dispatchNotesGrid.innerHTML = "";
       depWeatherCard.innerHTML = "";
       destWeatherCard.innerHTML = "";
       altWeatherCard.innerHTML = "";
@@ -804,6 +300,21 @@
       });
     }
 
+    function renderDispatchNotes(notes) {
+      dispatchNotesGrid.innerHTML = "";
+
+      const list = Array.isArray(notes) ? notes.filter(note => note && note.trim()) : [];
+
+      if (!list.length) {
+        dispatchNotesGrid.appendChild(createDataItem("Dispatch notes", "(none found)"));
+        return;
+      }
+
+      list.forEach((note, index) => {
+        dispatchNotesGrid.appendChild(createDataItem(`Note ${index + 1}`, note));
+      });
+    }
+
     function renderWeatherCard(el, titleText, wx) {
       el.innerHTML = "";
 
@@ -847,6 +358,36 @@
       const airportCode = [airport?.iata, airport?.icao].filter(Boolean).join(" / ");
       const list = Array.isArray(items) ? items : [];
 
+      function cleanNotamText(notam) {
+        let text = safeValue(notam?.raw_text, "(no text)");
+        const notamId = safeValue(notam?.notam_id, "").trim();
+
+        if (notamId) {
+          const escapedId = notamId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+          text = text.replace(new RegExp("^" + escapedId + "\\s*", "i"), "");
+          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=COMPANY NOTAM\\s*-)", "i"), "");
+          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=-\\s*CHART NOTAM)", "i"), "");
+        }
+
+        text = text.replace(
+          /^VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
+          ""
+        );
+
+        text = text.replace(
+          /^-\s*(?:CHART NOTAM|COMPANY NOTAM)\s+VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
+          ""
+        );
+
+        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s*-\s*/i, "");
+        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s+/i, "");
+        text = text.replace(/^\-\s*/, "");
+        text = text.trim();
+
+        return text || "(no text)";
+      }
+
       if (!list.length) {
         el.innerHTML = `
           <div class="notam-top">
@@ -873,13 +414,10 @@
           ${list.map(notam => `
             <div class="notam-item">
               <div class="notam-meta">
-                <span class="notam-badge ${safeValue(notam.importance, "important")}">
-                  ${safeValue(notam.importance, "important")}
-                </span>
-                <span class="notam-badge">${safeValue(notam.category, "NOTAM")}</span>
-                ${notam.notam_id ? `<span class="notam-badge">${notam.notam_id}</span>` : ""}
+                <span class="notam-badge">${safeValue(notam.notam_id, "NOTAM")}</span>
+                <span class="notam-badge">${safeValue(notam.validity, "Validity unavailable")}</span>
               </div>
-              <div class="notam-text">${safeValue(notam.raw_text, "(no text)")}</div>
+              <div class="notam-text">${cleanNotamText(notam)}</div>
             </div>
           `).join("")}
         </div>
@@ -891,6 +429,7 @@
       resultsEl.style.display = "none";
       emptyStateEl.style.display = "grid";
       detailsGrid.innerHTML = "";
+      dispatchNotesGrid.innerHTML = "";
       depWeatherCard.innerHTML = "";
       destWeatherCard.innerHTML = "";
       altWeatherCard.innerHTML = "";
@@ -907,8 +446,8 @@
 
       uploadBtn.disabled = true;
       uploadBtn.textContent = "Generating...";
-      statusPill.textContent = "Processing";
-      statusCopy.textContent = "Parsing OFP content and building the briefing view.";
+      statusPill.textContent = "Information only";
+      statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete operational information.";
 
       try {
         const formData = new FormData();
@@ -929,18 +468,18 @@
 
         const availableSections = [
           strip && Object.keys(strip).length ? "flight details" : "",
+          Array.isArray(data.dispatch_notes) && data.dispatch_notes.length ? "dispatch notes" : "",
           data.dep_weather ? "departure weather" : "",
           data.dest_weather ? "destination weather" : "",
           data.alt_weather ? "alternate weather" : "",
           Array.isArray(data.dep_notams) || Array.isArray(data.dest_notams) || Array.isArray(data.alt_notams) ? "NOTAMs" : ""
         ].filter(Boolean);
 
-        statusCopy.textContent = availableSections.length
-          ? `This briefing includes ${availableSections.join(", ")}.`
-          : "The document was processed, but only limited briefing data was available.";
+        statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete operational information.";
 
         renderSummary(strip);
         renderDetails(strip);
+        renderDispatchNotes(data.dispatch_notes);
         renderWeatherCard(depWeatherCard, "Departure weather", data.dep_weather);
         renderWeatherCard(destWeatherCard, "Destination weather", data.dest_weather);
         renderWeatherCard(altWeatherCard, "Alternate weather", data.alt_weather);
@@ -951,12 +490,12 @@
 
         emptyStateEl.style.display = "none";
         resultsEl.style.display = "grid";
-        statusPill.textContent = "Brief ready";
+        statusPill.textContent = "Information only";
       } catch (err) {
         console.error(err);
         errorEl.textContent = err.message;
-        statusPill.textContent = "Error";
-        statusCopy.textContent = "The document could not be processed.";
+        statusPill.textContent = "Information only";
+        statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete and operational information.";
       } finally {
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Generate Brief";

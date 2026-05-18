@@ -78,3 +78,4 @@ class Briefing:
     dep_notams: List[NotamEntry]
     dest_notams: List[NotamEntry]
     alt_notams: List[NotamEntry]
+    dispatch_notes: List[str] = None

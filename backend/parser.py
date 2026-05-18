@@ -247,6 +247,79 @@ def parse_max_sr_and_mora(text_norm: str) -> tuple[str, str]:
 
     return (f"{max_sr:02d}" if max_sr >= 0 else ""), (str(max_mora) if max_mora >= 0 else "")
 
+# parser.py
+
+def parse_driftsdown_notes(text_norm: str) -> list[str]:
+    notes = []
+
+    blocks = re.split(r"DISPATCH BRIEFING INFO DISP:", text_norm)
+    for block in blocks[1:]:
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        collecting = False
+
+        for line in lines:
+            if "DRIFTDOWN/DEPRESSURIZATION PROCEDURES" in line:
+                collecting = False
+                continue
+
+            if "DRIFTDOWN PROCEDURES ARE VALID FOR TAKEOFF WEIGHT UP TO" in line:
+                collecting = True
+                continue
+
+            if line.startswith("CREW NOTES:"):
+                break
+
+            if collecting:
+                if not line.startswith("-"):
+                    notes.append(line)
+                else:
+                    notes.append(line)
+
+    return notes
+
+def parse_dispatch_notes(text_norm: str) -> list[str]:
+    notes = []
+
+    blocks = re.split(r"DISPATCH BRIEFING INFO DISP:", text_norm)
+    for block in blocks[1:]:
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        collecting = False
+        current = []
+
+        for line in lines:
+            if line.startswith("CREW NOTES:"):
+                if current:
+                    notes.append(" ".join(current).strip())
+                    current = []
+                break
+
+            if "DRIFTDOWN PROCEDURES ARE VALID FOR TAKEOFF WEIGHT UP TO" in line:
+                collecting = True
+                current = []
+                continue
+
+            if not collecting:
+                continue
+
+            if line.startswith("-"):
+                if current:
+                    notes.append(" ".join(current).strip())
+                current = [line.lstrip("-").strip()]
+                continue
+
+            if re.match(r"^(WXX|WX|ETA|ETD|FUEL|ROUTE|PLANNED|E/B|EBS|ALTN)\b", line):
+                if current:
+                    notes.append(" ".join(current).strip())
+                current = [line]
+                continue
+
+            current.append(line)
+
+        if current:
+            notes.append(" ".join(current).strip())
+
+    return [note for note in notes if note]
+
 
 # ---------------------------------------------------------------------------
 # Main OFP → Briefing pipeline
@@ -327,6 +400,8 @@ def parse_briefing(path: str) -> Briefing:
         highest_mora=highest_mora,
     )
 
+    dispatch_notes = parse_dispatch_notes(text_norm)
+
     metars, tafs = parse_weather_blocks(text)
     dep_metar, dep_taf_all = pick_metar_taf_for_airport(dep_icao, metars, tafs)
     dest_metar, dest_taf_all = pick_metar_taf_for_airport(dest_icao, metars, tafs)
@@ -384,4 +459,5 @@ def parse_briefing(path: str) -> Briefing:
         dep_notams=dep_notams,
         dest_notams=dest_notams,
         alt_notams=alt_notams,
+        dispatch_notes=dispatch_notes,
     )

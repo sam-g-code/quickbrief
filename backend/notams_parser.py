@@ -1,4 +1,3 @@
-# notams_parser.py
 import re
 from datetime import datetime, timedelta
 from typing import List, Optional
@@ -10,18 +9,18 @@ NOTAM_HEADER_RE = re.compile(
     re.IGNORECASE,
 )
 
+NOTAM_HEADER_SPACE_RE = re.compile(
+    r"^([A-Z]{4})\s+([A-Z]{3})\s+(.+?)\s*-\s*DETAILED INFO$",
+    re.IGNORECASE,
+)
+
 CATEGORY_RE = re.compile(
     r"^(RUNWAY|AIRPORT|APPROACH PROCEDURE|SIDSTAR|COMPANY NOTAM|CHART NOTAM|AMDB NOTAM)\b",
     re.IGNORECASE,
 )
 
-NOTAM_ID_RE = re.compile(
-    r"\b([A-Z]{1,3}\d{2,7})\b",
-    re.IGNORECASE,
-)
-
 NOTAM_ENTRY_START_RE = re.compile(
-    r"^(?:\d?[A-Z]{1,2}\d{3,7}|CO\d{2,7}|CC\d{2,7}|CA\d{2,7}|SX\d{2,7})\b",
+    r"^((?:\d?[A-Z]{1,2}\d{3,7}|CO\d{2,7}|CC\d{2,7}|CA\d{2,7}|SX\d{2,7})/\d{2})\b",
     re.IGNORECASE,
 )
 
@@ -65,179 +64,9 @@ def extract_notam_block(text: str) -> str:
     return text[start:end]
 
 
-def build_notam_entry(
-    category: str,
-    lines: List[str],
-    airport_icao: str,
-    airport_iata: str,
-    airport_name: str,
-) -> Optional[NotamEntry]:
-    raw_text = " ".join(lines).strip()
-    raw_text = re.sub(r"\s+", " ", raw_text)
-
-    if not raw_text:
-        return None
-
-    notam_id_match = NOTAM_ID_RE.search(raw_text)
-    notam_id = notam_id_match.group(1).upper() if notam_id_match else ""
-
-    validity_match = re.search(r"\bVALID\s+(.+?)(?=\s(?:RUNWAY|AIRPORT|APPROACH|SIDSTAR|COMPANY|CHART|AMDB)\b|$)", raw_text, re.IGNORECASE)
-    validity = validity_match.group(1).strip() if validity_match else ""
-
-    return NotamEntry(
-        notam_id=notam_id,
-        category=(category or "").upper(),
-        validity=validity,
-        raw_text=raw_text,
-        source_airport_icao=airport_icao,
-        source_airport_iata=airport_iata,
-        source_airport_name=airport_name,
-        importance="time_filtered",
-        importance_score=0,
-        importance_reasons=[],
-    )
-
-
-def split_notam_entries(
-    section_lines: List[str],
-    airport_icao: str,
-    airport_iata: str,
-    airport_name: str,
-) -> List[NotamEntry]:
-    entries = []
-    current_category = None
-    current_notam_lines = []
-    current_notam_id = None
-
-    section_boundary_re = re.compile(r"^[=+]{8,}.*[=+]{8,}$")
-    category_re = re.compile(
-        r"^(RUNWAY|AIRPORT|APPROACH PROCEDURE|SIDSTAR|COMPANY NOTAM|CHART NOTAM|AMDB NOTAM)\b",
-        re.IGNORECASE,
-    )
-    notam_id_start_re = re.compile(
-        r"^((?:\d?[A-Z]{1,2}\d{3,7}|CO\d{2,7}|CC\d{2,7}|CA\d{2,7}|SX\d{2,7})/\d{2})\b",
-        re.IGNORECASE,
-    )
-    plain_section_title_re = re.compile(
-        r"^(DEPARTURE AIRPORT|DESTINATION AIRPORT|DESTINATION ALTERNATE(?:\(S\)|S)?)$",
-        re.IGNORECASE,
-    )
-
-    def flush_current():
-        nonlocal current_notam_lines, current_notam_id
-        if current_notam_lines:
-            entry = build_notam_entry(
-                category=current_category,
-                lines=current_notam_lines,
-                airport_icao=airport_icao,
-                airport_iata=airport_iata,
-                airport_name=airport_name,
-            )
-            if entry:
-                entries.append(entry)
-        current_notam_lines = []
-        current_notam_id = None
-
-    for line in section_lines:
-        if is_noise_line(line):
-            continue
-
-        line = line.strip()
-        if not line:
-            continue
-
-        if section_boundary_re.match(line) or plain_section_title_re.match(line):
-            flush_current()
-            current_category = None
-            continue
-
-        category_match = category_re.match(line)
-        if category_match:
-            flush_current()
-            current_category = category_match.group(1).upper()
-            continue
-
-        notam_id_match = notam_id_start_re.match(line)
-        if notam_id_match:
-            line_notam_id = notam_id_match.group(1).upper()
-
-            if current_notam_lines and current_notam_id == line_notam_id:
-                current_notam_lines.append(line)
-                continue
-
-            flush_current()
-            current_notam_lines = [line]
-            current_notam_id = line_notam_id
-            continue
-
-        if current_notam_lines:
-            current_notam_lines.append(line)
-
-    flush_current()
-    return entries
-
-
-def parse_notam_sections(text: str) -> List[AirportNotamSection]:
-    notam_text = extract_notam_block(text)
-    lines = normalize_notam_text(notam_text)
-
-    airport_sections: List[AirportNotamSection] = []
-    header_indexes: List[int] = []
-
-    divider_title_re = re.compile(
-        r"^(DEPARTURE AIRPORT|DESTINATION AIRPORT|DESTINATION ALTERNATE(?:\(S\)|S)?)$",
-        re.IGNORECASE,
-    )
-
-    for i, line in enumerate(lines):
-        if NOTAM_HEADER_RE.match(line):
-            header_indexes.append(i)
-
-    for pos, start_idx in enumerate(header_indexes):
-        match = NOTAM_HEADER_RE.match(lines[start_idx])
-        if not match:
-            continue
-
-        airport_icao = match.group(1).upper()
-        airport_iata = match.group(2).upper()
-        airport_name = match.group(3).strip()
-
-        end_idx = len(lines)
-
-        for j in range(start_idx + 1, len(lines)):
-            if NOTAM_HEADER_RE.match(lines[j]):
-                end_idx = j
-                break
-            if divider_title_re.match(lines[j]):
-                end_idx = j
-                break
-
-        section_lines = lines[start_idx + 1:end_idx]
-
-        entries = split_notam_entries(
-            section_lines=section_lines,
-            airport_icao=airport_icao,
-            airport_iata=airport_iata,
-            airport_name=airport_name,
-        )
-
-        airport_sections.append(
-            AirportNotamSection(
-                airport_icao=airport_icao,
-                airport_iata=airport_iata,
-                airport_name=airport_name,
-                section_title="DETAILED INFO",
-                entries=entries,
-            )
-        )
-
-    return airport_sections
-
-
 def parse_notam_datetime(token: str) -> Optional[datetime]:
     if not token or token.upper() == "UFN":
         return None
-
     try:
         year = 2000 + int(token[0:2])
         month = int(token[2:4])
@@ -265,19 +94,184 @@ def extract_validity_range(raw_text: str) -> tuple[Optional[datetime], Optional[
     return start_dt, end_dt
 
 
-def overlaps_window(
-    notam_start: Optional[datetime],
-    notam_end: Optional[datetime],
-    window_start: Optional[datetime],
-    window_end: Optional[datetime],
-) -> bool:
-    if window_start is None or window_end is None:
-        return True
+def build_notam_entry(
+    category: str,
+    lines: List[str],
+    airport_icao: str,
+    airport_iata: str,
+    airport_name: str,
+) -> Optional[NotamEntry]:
+    raw_text = " ".join(lines).strip()
+    raw_text = re.sub(r"\s+", " ", raw_text)
 
-    effective_start = notam_start or datetime.min
-    effective_end = notam_end or datetime.max
+    if not raw_text:
+        return None
 
-    return effective_start <= window_end and effective_end >= window_start
+    notam_id_match = re.search(
+        r"\b((?:\d?[A-Z]{1,2}\d{3,7}|CO\d{2,7}|CC\d{2,7}|CA\d{2,7}|SX\d{2,7})/\d{2})\b",
+        raw_text,
+        re.IGNORECASE,
+    )
+    notam_id = notam_id_match.group(1).upper() if notam_id_match else ""
+
+    validity = ""
+    start_dt, end_dt = extract_validity_range(raw_text)
+    range_match = VALID_RANGE_RE.search(raw_text)
+    if range_match:
+        start_token = range_match.group(1)
+        end_token = range_match.group(2).upper()
+
+        def fmt(dt: Optional[datetime]) -> str:
+            if not dt:
+                return ""
+            return f"{dt.day}/{dt.month}/{str(dt.year)[2:]} {dt.strftime('%H:%M')}"
+
+        if start_dt and end_dt:
+            validity = f"{fmt(start_dt)} - {fmt(end_dt)}"
+        elif start_dt and end_token in {"UFN", "PERM"}:
+            validity = f"{fmt(start_dt)} - {end_token}"
+        else:
+            validity = f"{start_token} - {end_token}"
+
+    return NotamEntry(
+        notam_id=notam_id,
+        category=(category or "").upper(),
+        validity=validity,
+        raw_text=raw_text,
+        source_airport_icao=airport_icao,
+        source_airport_iata=airport_iata,
+        source_airport_name=airport_name,
+        importance="unknown",
+        importance_score=0,
+        importance_reasons=[],
+    )
+
+
+def split_notam_entries(
+    section_lines: List[str],
+    airport_icao: str,
+    airport_iata: str,
+    airport_name: str,
+) -> List[NotamEntry]:
+    entries: List[NotamEntry] = []
+    current_category: Optional[str] = None
+    current_notam_lines: List[str] = []
+    current_notam_id: Optional[str] = None
+
+    section_boundary_re = re.compile(r"^[=+]{8,}.*[=+]{8,}$")
+    plain_section_title_re = re.compile(
+        r"^(DEPARTURE AIRPORT|DESTINATION AIRPORT|DESTINATION ALTERNATE(?:\(S\)|S)?)$",
+        re.IGNORECASE,
+    )
+
+    def flush_current():
+        nonlocal current_notam_lines, current_notam_id
+        if current_notam_lines:
+            entry = build_notam_entry(
+                category=current_category or "",
+                lines=current_notam_lines,
+                airport_icao=airport_icao,
+                airport_iata=airport_iata,
+                airport_name=airport_name,
+            )
+            if entry:
+                entries.append(entry)
+        current_notam_lines = []
+        current_notam_id = None
+
+    for line in section_lines:
+        if is_noise_line(line):
+            continue
+
+        line = line.strip()
+        if not line:
+            continue
+
+        if section_boundary_re.match(line) or plain_section_title_re.match(line):
+            flush_current()
+            current_category = None
+            continue
+
+        category_match = CATEGORY_RE.match(line)
+        if category_match:
+            flush_current()
+            current_category = category_match.group(1).upper()
+            continue
+
+        notam_id_match = NOTAM_ENTRY_START_RE.match(line)
+        if notam_id_match:
+            line_notam_id = notam_id_match.group(1).upper()
+
+            if current_notam_lines and current_notam_id == line_notam_id:
+                current_notam_lines.append(line)
+                continue
+
+            flush_current()
+            current_notam_lines = [line]
+            current_notam_id = line_notam_id
+            continue
+
+        if current_notam_lines:
+            current_notam_lines.append(line)
+
+    flush_current()
+    return entries
+
+
+def parse_notam_sections(text: str) -> List[AirportNotamSection]:
+    notam_text = extract_notam_block(text)
+    lines = normalize_notam_text(notam_text)
+
+    airport_sections: List[AirportNotamSection] = []
+    divider_title_re = re.compile(
+        r"^(DEPARTURE AIRPORT|DESTINATION AIRPORT|DESTINATION ALTERNATE(?:\(S\)|S)?)$",
+        re.IGNORECASE,
+    )
+
+    header_indexes: List[tuple[int, str, str, str]] = []
+
+    for i, line in enumerate(lines):
+        match = NOTAM_HEADER_RE.match(line) or NOTAM_HEADER_SPACE_RE.match(line)
+        if match:
+            header_indexes.append(
+                (
+                    i,
+                    match.group(1).upper(),
+                    match.group(2).upper(),
+                    match.group(3).strip(),
+                )
+            )
+
+    for start_idx, airport_icao, airport_iata, airport_name in header_indexes:
+        end_idx = len(lines)
+
+        for j in range(start_idx + 1, len(lines)):
+            if divider_title_re.match(lines[j]):
+                end_idx = j
+                break
+            if NOTAM_HEADER_RE.match(lines[j]) or NOTAM_HEADER_SPACE_RE.match(lines[j]):
+                end_idx = j
+                break
+
+        section_lines = lines[start_idx + 1:end_idx]
+        entries = split_notam_entries(
+            section_lines=section_lines,
+            airport_icao=airport_icao,
+            airport_iata=airport_iata,
+            airport_name=airport_name,
+        )
+
+        airport_sections.append(
+            AirportNotamSection(
+                airport_icao=airport_icao,
+                airport_iata=airport_iata,
+                airport_name=airport_name,
+                section_title="DETAILED INFO",
+                entries=entries,
+            )
+        )
+
+    return airport_sections
 
 
 def apply_notam_filter_rules(
@@ -288,12 +282,59 @@ def apply_notam_filter_rules(
     start_dt, end_dt = extract_validity_range(entry.raw_text)
 
     if window_start is not None and window_end is not None:
-        if not overlaps_window(start_dt, end_dt, window_start, window_end):
+        effective_start = start_dt or datetime.min
+        effective_end = end_dt or datetime.max
+        if not (effective_start <= window_end and effective_end >= window_start):
             return None
 
-    entry.importance = "time_filtered"
-    entry.importance_score = 1
-    entry.importance_reasons = ["Within flight window"]
+    text = f"{entry.category} {entry.raw_text}".upper()
+    score = 0
+    reasons: List[str] = []
+
+    if "COMPANY NOTAM" in text:
+        score += 100
+        reasons.append("Company NOTAM")
+
+    if ("RWY" in text or "RUNWAY" in text) and any(word in text for word in ["CLSD", "CLOSED", "CLOSURE"]):
+        score += 90
+        reasons.append("Runway closure")
+
+    if ("TWY" in text or "TAXIWAY" in text) and any(word in text for word in ["CLSD", "CLOSED", "CLOSURE"]):
+        score += 70
+        reasons.append("Taxiway closure")
+
+    if "RFFS" in text:
+        score += 80
+        reasons.append("RFFS change")
+
+    if "FUEL" in text:
+        score += 80
+        reasons.append("Fuel impact")
+
+    if any(word in text for word in ["ILS", "GLS", "MLS", "LOC", "GP", "GS", "DME", "VOR", "NDB", "RNAV", "RNP"]):
+        if any(word in text for word in ["U/S", "UNSERVICEABLE", "NOT AVBL", "NOT AVAILABLE", "OUT OF SERVICE"]):
+            score += 70
+            reasons.append("Nav aid/procedure unavailable")
+
+    if any(word in text for word in ["MDA", "MDH", " DA ", " DH "]):
+        score += 60
+        reasons.append("Approach minima related")
+
+    if any(word in text for word in ["AIRSPACE", "FIR", "CTA", "TMA", "CTR"]) and any(
+        word in text for word in ["CLSD", "CLOSED", "RESTRICTED", "PROHIBITED"]
+    ):
+        score += 85
+        reasons.append("Airspace restriction")
+
+    if score > 0:
+        entry.importance = "important"
+        entry.importance_score = score
+        entry.importance_reasons = reasons
+    else:
+        entry.importance = "other"
+        entry.importance_score = 0
+        entry.importance_reasons = ["Within flight window"]
+
     return entry
 
 
@@ -332,8 +373,16 @@ def filter_important_notams(
 
         for entry in section.entries:
             kept = apply_notam_filter_rules(entry, window_start, window_end)
-            if kept:
+            if kept and kept.importance == "important":
                 filtered_entries.append(kept)
+
+        filtered_entries.sort(
+            key=lambda entry: (
+                entry.importance_score,
+                entry.notam_id,
+            ),
+            reverse=True,
+        )
 
         filtered_sections.append(
             AirportNotamSection(
