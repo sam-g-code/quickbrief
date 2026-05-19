@@ -17,16 +17,12 @@
           <div class="brand-mark">QB</div>
           <div class="brand-name">QuickBrief</div>
         </div>
-        <div class="meta-chip">OFP briefing parser</div>
+        <div class="meta-chip">OFP parser</div>
       </div>
 
       <div class="upload-panel">
         <div class="upload-card">
-          <div class="eyebrow">Briefing input</div>
           <h2 class="upload-title">Upload OFP PDF</h2>
-          <p class="upload-subtitle">
-            Generate a structured flight briefing with summary data, weather, and filtered operational NOTAMs.
-          </p>
 
           <div class="upload-row">
             <div class="file-wrap">
@@ -40,10 +36,9 @@
 
         <div class="status-card">
           <div>
-            <div class="eyebrow">Warning</div>
-            <h2 class="status-title">Operational use notice</h2>
+            <h2 class="status-title">Operational use</h2>
             <p class="status-copy" id="statusCopy">
-              This page is for information only. Always refer to the full briefing package for complete operational information.
+              Info only. Always verify against the full OFP.
             </p>
           </div>
           <div class="status-pill" id="statusPill">Information only</div>
@@ -53,11 +48,8 @@
 
     <div class="empty-state" id="emptyState">
       <div>
-        <h2>Your briefing will appear here</h2>
-        <p>
-          Once a PDF is uploaded, QuickBrief will show the flight overview, operational details,
-          station weather, and important NOTAMs in a clean briefing layout.
-        </p>
+        <h2>Briefing appears here</h2>
+        <p>Upload a PDF to view summary, weather, and important NOTAMs.</p>
       </div>
     </div>
 
@@ -82,7 +74,7 @@
         </article>
 
         <article class="summary-card">
-          <div class="summary-label">OFP / Flight Time</div>
+          <div class="summary-label">OFP / Time</div>
           <div class="summary-value" id="summaryOfp">—</div>
           <div class="summary-sub" id="summaryFlightTime">—</div>
         </article>
@@ -95,39 +87,33 @@
       </section>
 
       <section class="details-layout">
-        <article class="section-card">
-          <div class="eyebrow">Flight overview</div>
-          <h2 class="section-title">Operational details</h2>
-          <p class="section-subtitle">Core flight and performance fields extracted from the OFP.</p>
+        <div class="left-column">
+          <article class="section-card">
+            <h2 class="section-title">Operational details</h2>
+            <div class="data-grid data-grid-compact" id="detailsGrid"></div>
+          </article>
 
-          <div class="data-grid" id="detailsGrid"></div>
-        </article>
+          <article class="section-card dispatch-section">
+            <h2 class="section-title">Dispatch notes</h2>
+            <div class="data-grid dispatch-grid" id="dispatchNotesGrid"></div>
+          </article>
+        </div>
 
-        <article class="section-card">
-          <div class="eyebrow">Dispatch</div>
-          <h2 class="section-title">Dispatch briefing notes</h2>
-          <p class="section-subtitle">Lines captured between the driftdown weight line and crew notes.</p>
+        <div class="right-column">
+          <article class="section-card">
+            <h2 class="section-title">Weather</h2>
 
-          <div class="data-grid" id="dispatchNotesGrid"></div>
-        </article>
-
-        <article class="section-card">
-          <div class="eyebrow">Weather</div>
-          <h2 class="section-title">Station weather</h2>
-          <p class="section-subtitle">Departure, destination, and alternate weather blocks.</p>
-
-          <div class="weather-stack">
-            <div class="weather-card" id="depWeatherCard"></div>
-            <div class="weather-card" id="destWeatherCard"></div>
-            <div class="weather-card" id="altWeatherCard"></div>
-          </div>
-        </article>
+            <div class="weather-stack">
+              <div class="weather-card" id="depWeatherCard"></div>
+              <div class="weather-card" id="destWeatherCard"></div>
+              <div class="weather-card" id="altWeatherCard"></div>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="section-card">
-        <div class="eyebrow">Operational NOTAMs</div>
         <h2 class="section-title">Important airport NOTAMs</h2>
-        <p class="section-subtitle">Filtered NOTAMs for departure, destination, and alternate.</p>
 
         <div class="notam-grid">
           <div class="notam-card" id="depNotamsCard"></div>
@@ -207,6 +193,8 @@
       depNotamsCard.innerHTML = "";
       destNotamsCard.innerHTML = "";
       altNotamsCard.innerHTML = "";
+      statusPill.textContent = "Information only";
+      statusCopy.textContent = "Info only. Always verify against the full OFP.";
 
       summaryFlight.textContent = "—";
       summaryDate.textContent = "—";
@@ -282,7 +270,7 @@
         ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
         ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
         ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
-        ["Flight level range", joinParts([
+        ["FL range", joinParts([
           safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
           safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
         ])],
@@ -291,8 +279,8 @@
         ["EZFW", strip.ezfw],
         ["ETOW", strip.etow],
         ["ELWT", strip.elwt],
-        ["Max shear rate", strip.max_shear_rate],
-        ["Highest MORA", strip.highest_mora]
+        ["Max shear", strip.max_shear_rate],
+        ["MORA", strip.highest_mora]
       ];
 
       fields.forEach(([label, value]) => {
@@ -310,8 +298,8 @@
         return;
       }
 
-      list.forEach((note, index) => {
-        dispatchNotesGrid.appendChild(createDataItem(`Note ${index + 1}`, note));
+      list.forEach((note) => {
+        dispatchNotesGrid.appendChild(createDataItem("Dispatch note", note));
       });
     }
 
@@ -326,7 +314,7 @@
               <div class="weather-station">No weather data</div>
             </div>
           </div>
-          <div class="weather-window">No weather information was returned for this station.</div>
+          <div class="weather-window">No weather information returned.</div>
         `;
         return;
       }
@@ -364,7 +352,6 @@
 
         if (notamId) {
           const escapedId = notamId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
           text = text.replace(new RegExp("^" + escapedId + "\\s*", "i"), "");
           text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=COMPANY NOTAM\\s*-)", "i"), "");
           text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=-\\s*CHART NOTAM)", "i"), "");
@@ -447,7 +434,7 @@
       uploadBtn.disabled = true;
       uploadBtn.textContent = "Generating...";
       statusPill.textContent = "Information only";
-      statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete operational information.";
+      statusCopy.textContent = "Info only. Always verify against the full OFP.";
 
       try {
         const formData = new FormData();
@@ -466,36 +453,22 @@
         const data = await res.json();
         const strip = data.strip || {};
 
-        const availableSections = [
-          strip && Object.keys(strip).length ? "flight details" : "",
-          Array.isArray(data.dispatch_notes) && data.dispatch_notes.length ? "dispatch notes" : "",
-          data.dep_weather ? "departure weather" : "",
-          data.dest_weather ? "destination weather" : "",
-          data.alt_weather ? "alternate weather" : "",
-          Array.isArray(data.dep_notams) || Array.isArray(data.dest_notams) || Array.isArray(data.alt_notams) ? "NOTAMs" : ""
-        ].filter(Boolean);
-
-        statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete operational information.";
-
         renderSummary(strip);
         renderDetails(strip);
         renderDispatchNotes(data.dispatch_notes);
-        renderWeatherCard(depWeatherCard, "Departure weather", data.dep_weather);
-        renderWeatherCard(destWeatherCard, "Destination weather", data.dest_weather);
-        renderWeatherCard(altWeatherCard, "Alternate weather", data.alt_weather);
+        renderWeatherCard(depWeatherCard, "Departure", data.dep_weather);
+        renderWeatherCard(destWeatherCard, "Destination", data.dest_weather);
+        renderWeatherCard(altWeatherCard, "Alternate", data.alt_weather);
 
-        renderNotamCard(depNotamsCard, "Departure NOTAMs", data.dep_weather, data.dep_notams);
-        renderNotamCard(destNotamsCard, "Destination NOTAMs", data.dest_weather, data.dest_notams);
-        renderNotamCard(altNotamsCard, "Alternate NOTAMs", data.alt_weather, data.alt_notams);
+        renderNotamCard(depNotamsCard, "Departure", data.dep_weather, data.dep_notams);
+        renderNotamCard(destNotamsCard, "Destination", data.dest_weather, data.dest_notams);
+        renderNotamCard(altNotamsCard, "Alternate", data.alt_weather, data.alt_notams);
 
         emptyStateEl.style.display = "none";
         resultsEl.style.display = "grid";
-        statusPill.textContent = "Information only";
       } catch (err) {
         console.error(err);
         errorEl.textContent = err.message;
-        statusPill.textContent = "Information only";
-        statusCopy.textContent = "This page is for information only. Always refer to the full briefing package for complete and operational information.";
       } finally {
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Generate Brief";
