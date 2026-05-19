@@ -1,20 +1,117 @@
-QUICKBRIEF/
-├── .venv/
+
 ├── backend/
-├── render.yaml
-│   ├── __pycache__/
-│   ├── sample_ofp/
-│   │   └── example.pdf
-│   ├── templates/
-│   │   └── index.html
-│   ├── airports.dat
-│   ├── requirements.txt
-│   ├── app.py
-│   ├── airport_utils.py
-│   ├── time_utils.py
-│   ├── taf_utils.py
-│   ├── models.py
-│   ├── parser.py
-│   ├── weather_parser.py
-│   └── notam_parser.py
-└── TXT Files/
+|   airports.dat
+|   airport_utils.py
+|   app.py
+|   models.py
+|   notams_parser.py
+|   parser.py
+|   requirements.txt
+|   taf_utils.py
+|   time_utils.py
+|   weather_parser.py
+|   
++---sample_ofp
+|       example.pdf
+|       
++---static
+|       styles.css
+|       
++---templates
+|       index.html
+|       
+\---__pycache__
+        airport_utils.cpython-314.pyc
+        models.cpython-314.pyc
+        notams_parser.cpython-314.pyc
+        notam_parser.cpython-314.pyc
+        parser.cpython-314.pyc
+        taf_utils.cpython-314.pyc
+        time_utils.cpython-314.pyc
+        weather_parser.cpython-314.pyc
+
+
+├── frontend/
+|   .gitignore
+|   .prettierignore
+|   .prettierrc
+|   bun.lock
+|   bunfig.toml
+|   components.json
+|   eslint.config.js
+|   package.json
+|   tsconfig.json
+|   vite.config.ts
+|   wrangler.jsonc
+|   
++---.lovable
+|       project.json
+|       
+\---src
+    |   router.tsx
+    |   routeTree.gen.ts
+    |   server.ts
+    |   start.ts
+    |   styles.css
+    |   
+    +---components
+    |   \---ui
+    |           accordion.tsx
+    |           alert-dialog.tsx
+    |           alert.tsx
+    |           aspect-ratio.tsx
+    |           avatar.tsx
+    |           badge.tsx
+    |           breadcrumb.tsx
+    |           button.tsx
+    |           calendar.tsx
+    |           card.tsx
+    |           carousel.tsx
+    |           chart.tsx
+    |           checkbox.tsx
+    |           collapsible.tsx
+    |           command.tsx
+    |           context-menu.tsx
+    |           dialog.tsx
+    |           drawer.tsx
+    |           dropdown-menu.tsx
+    |           form.tsx
+    |           hover-card.tsx
+    |           input-otp.tsx
+    |           input.tsx
+    |           label.tsx
+    |           menubar.tsx
+    |           navigation-menu.tsx
+    |           pagination.tsx
+    |           popover.tsx
+    |           progress.tsx
+    |           radio-group.tsx
+    |           resizable.tsx
+    |           scroll-area.tsx
+    |           select.tsx
+    |           separator.tsx
+    |           sheet.tsx
+    |           sidebar.tsx
+    |           skeleton.tsx
+    |           slider.tsx
+    |           sonner.tsx
+    |           switch.tsx
+    |           table.tsx
+    |           tabs.tsx
+    |           textarea.tsx
+    |           toggle-group.tsx
+    |           toggle.tsx
+    |           tooltip.tsx
+    |           
+    +---hooks
+    |       use-mobile.tsx
+    |       
+    +---lib
+    |       error-capture.ts
+    |       error-page.ts
+    |       sample-briefing.ts
+    |       utils.ts
+    |       
+    \---routes
+            index.tsx
+            __root.tsx

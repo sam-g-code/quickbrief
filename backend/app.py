@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from dataclasses import asdict
 import os
 import tempfile
@@ -9,6 +10,7 @@ print("APP IMPORTING NOTAMS FROM:", notams_parser.__file__)
 from parser import parse_briefing
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @app.route("/", methods=["GET"])
@@ -33,6 +35,8 @@ def briefing():
         briefing_obj = parse_briefing(pdf_path)
         data = asdict(briefing_obj)
         return jsonify(data)
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
     finally:
         if os.path.exists(pdf_path):
             os.remove(pdf_path)

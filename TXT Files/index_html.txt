@@ -7,485 +7,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f4f1ea;
-      --surface: rgba(255, 255, 255, 0.72);
-      --surface-strong: rgba(255, 255, 255, 0.9);
-      --border: rgba(15, 23, 42, 0.08);
-      --text: #172033;
-      --muted: #667085;
-      --accent: #0f766e;
-      --accent-dark: #0b5e58;
-      --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-pill: 999px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-  margin: 0;
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 30%),
-    radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 28%),
-    linear-gradient(180deg, #f8f6f1 0%, #f1eee7 100%);
-  min-height: 100vh;
-  padding: 28px;
-}
-
-.page {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 18px 22px 40px;
-}
-
-.hero {
-  background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(255,255,255,0.64));
-  border: 1px solid rgba(255,255,255,0.7);
-  box-shadow: var(--shadow);
-  border-radius: 32px;
-  padding: 22px 24px;
-  backdrop-filter: blur(14px);
-  margin-bottom: 28px;
-}
-
-.hero-top {
-  display: block;
-  margin-bottom: 12px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 0;
-}
-
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), #123c62);
-  display: grid;
-  place-items: center;
-  color: white;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.22);
-}
-
-.brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-    .meta-chip {
-  background: rgba(255,255,255,0.8);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  border-radius: var(--radius-pill);
-  padding: 10px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-    .upload-panel {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .upload-card,
-    .status-card,
-    .section-card,
-    .weather-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-    }
-
-    .upload-card {
-      padding: 20px;
-    }
-
-    .status-card {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .upload-title,
-    .status-title,
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin: 0 0 8px;
-    }
-
-    .upload-subtitle,
-    .status-copy,
-    .section-subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .upload-row {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .file-wrap {
-      flex: 1;
-      min-width: 240px;
-      position: relative;
-    }
-
-    .file-wrap input[type="file"] {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px dashed rgba(15, 23, 42, 0.14);
-      border-radius: 16px;
-      background: rgba(255,255,255,0.72);
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    button {
-      border: none;
-      border-radius: var(--radius-pill);
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: #ffffff;
-      padding: 14px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      box-shadow: 0 14px 28px rgba(15, 118, 110, 0.24);
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: default;
-      transform: none;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      border-radius: var(--radius-pill);
-      padding: 9px 12px;
-      background: rgba(15, 118, 110, 0.09);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .error {
-      margin-top: 14px;
-      color: #b42318;
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
-
-    .results {
-  display: none;
-  gap: 24px;
-  margin-top: 28px;
-}
-
-    .summary-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.summary-card {
-  background: var(--surface-strong);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 14px 14px 12px;
-  min-height: 88px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-}
-
-.summary-label {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.summary-value {
-  font-size: 18px;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
-  word-break: break-word;
-}
-
-.summary-sub {
-  font-size: 12px;
-  line-height: 1.35;
-  color: var(--muted);
-  word-break: break-word;
-}
-
-    .details-layout {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 18px;
-    }
-
-    .section-card {
-      padding: 22px;
-    }
-
-    .data-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .data-item {
-      background: rgba(255,255,255,0.7);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 92px;
-    }
-
-    .data-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .data-value {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.45;
-      word-break: break-word;
-    }
-
-    .weather-stack {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .weather-card {
-      padding: 18px;
-      background: rgba(255,255,255,0.78);
-    }
-
-    .weather-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .weather-station {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .weather-code {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-
-    .weather-window {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-      white-space: pre-wrap;
-    }
-
-    .wx-block {
-      padding-top: 12px;
-      border-top: 1px solid rgba(15, 23, 42, 0.08);
-      margin-top: 12px;
-    }
-
-    .wx-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .wx-value {
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-.empty-state {
-  display: grid;
-  place-items: center;
-  min-height: 300px;
-  text-align: center;
-  padding: 40px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow);
-}
-
-    .empty-state h2 {
-      margin: 0 0 8px;
-      font-size: 26px;
-      letter-spacing: -0.03em;
-    }
-
-    .empty-state p {
-      margin: 0;
-      max-width: 46ch;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-   .summary-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (max-width: 1100px) {
-  .upload-panel,
-  .details-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .summary-card {
-    min-height: auto;
-    padding: 12px;
-  }
-
-  .summary-value {
-    font-size: 17px;
-  }
-
-  .summary-sub {
-    font-size: 11px;
-  }
-
-  .columns-3 {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  body {
-    padding: 14px;
-  }
-
-  .page {
-    padding: 10px 8px 28px;
-  }
-
-  .hero {
-    padding: 16px;
-    border-radius: 24px;
-    margin-bottom: 18px;
-  }
-
-  .data-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-card,
-  .section-card,
-  .weather-card,
-  .upload-card,
-  .status-card {
-    border-radius: 18px;
-  }
-}
-
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <div class="hero-top">
-  <div class="brand">
-    <div class="brand-mark">QB</div>
-    <div class="brand-name">QuickBrief</div>
-  </div>
-</div>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <div class="brand-mark">QB</div>
+          <div class="brand-name">QuickBrief</div>
+        </div>
+        <div class="meta-chip">OFP parser</div>
+      </div>
 
       <div class="upload-panel">
         <div class="upload-card">
-          <div class="eyebrow">Briefing input</div>
           <h2 class="upload-title">Upload OFP PDF</h2>
 
           <div class="upload-row">
@@ -499,346 +35,447 @@
         </div>
 
         <div class="status-card">
-  <div>
-    <div class="eyebrow">Document status</div>
-    <h2 class="status-title">Brief readiness</h2>
-    <p class="status-copy" id="statusCopy">
-      Upload an OFP PDF to generate a structured briefing with flight overview, routing, aircraft details,
-      and available weather sections.
-    </p>
-  </div>
-
-  <div class="status-pill" id="statusPill">Awaiting document</div>
-</div>
+          <div>
+            <h2 class="status-title">Operational use</h2>
+            <p class="status-copy" id="statusCopy">
+              Info only. Always verify against the full OFP.
+            </p>
+          </div>
+          <div class="status-pill" id="statusPill">Information only</div>
+        </div>
       </div>
     </section>
 
     <div class="empty-state" id="emptyState">
       <div>
-        <h2>Your briefing will appear here</h2>
-        <p>
-          Once a PDF is uploaded, QuickBrief will show the flight overview, operational details,
-          and destination weather in a more refined layout.
-        </p>
+        <h2>Briefing appears here</h2>
+        <p>Upload a PDF to view summary, weather, and important NOTAMs.</p>
       </div>
     </div>
 
     <div class="results" id="results">
       <section class="summary-grid">
-  <article class="summary-card">
-    <div class="summary-label">Flight</div>
-    <div class="summary-value" id="summaryFlight">—</div>
-    <div class="summary-sub" id="summaryDate">—</div>
-  </article>
+        <article class="summary-card">
+          <div class="summary-label">Flight</div>
+          <div class="summary-value" id="summaryFlight">—</div>
+          <div class="summary-sub" id="summaryDate">—</div>
+        </article>
 
-  <article class="summary-card">
-    <div class="summary-label">Route</div>
-    <div class="summary-value" id="summaryRoute">—</div>
-    <div class="summary-sub" id="summaryAirports">—</div>
-  </article>
+        <article class="summary-card">
+          <div class="summary-label">Route</div>
+          <div class="summary-value" id="summaryRoute">—</div>
+          <div class="summary-sub" id="summaryAirports">—</div>
+        </article>
 
-  <article class="summary-card">
-    <div class="summary-label">Schedule</div>
-    <div class="summary-value" id="summarySchedule">—</div>
-    <div class="summary-sub" id="summaryScheduleLocal">—</div>
-  </article>
+        <article class="summary-card">
+          <div class="summary-label">Schedule</div>
+          <div class="summary-value" id="summarySchedule">—</div>
+          <div class="summary-sub" id="summaryScheduleLocal">—</div>
+        </article>
 
-  <article class="summary-card">
-    <div class="summary-label">OFP / Flight Time</div>
-    <div class="summary-value" id="summaryOfp">—</div>
-    <div class="summary-sub" id="summaryFlightTime">—</div>
-  </article>
+        <article class="summary-card">
+          <div class="summary-label">OFP / Time</div>
+          <div class="summary-value" id="summaryOfp">—</div>
+          <div class="summary-sub" id="summaryFlightTime">—</div>
+        </article>
 
-  <article class="summary-card">
-    <div class="summary-label">Aircraft</div>
-    <div class="summary-value" id="summaryAircraft">—</div>
-    <div class="summary-sub" id="summaryOps">—</div>
-  </article>
-</section>
+        <article class="summary-card">
+          <div class="summary-label">Aircraft</div>
+          <div class="summary-value" id="summaryAircraft">—</div>
+          <div class="summary-sub" id="summaryOps">—</div>
+        </article>
+      </section>
 
       <section class="details-layout">
-        <article class="section-card">
-          <div class="eyebrow">Flight overview</div>
-          <h2 class="section-title">Operational details</h2>
+        <div class="left-column">
+          <article class="section-card">
+            <h2 class="section-title">Operational details</h2>
+            <div class="data-grid data-grid-compact" id="detailsGrid"></div>
+          </article>
 
-          <div class="data-grid" id="detailsGrid"></div>
-        </article>
+          <article class="section-card dispatch-section">
+            <h2 class="section-title">Dispatch notes</h2>
+            <div class="data-grid dispatch-grid" id="dispatchNotesGrid"></div>
+          </article>
+        </div>
 
-        <article class="section-card">
-          <div class="eyebrow">Weather</div>
-          <h2 class="section-title">Station weather</h2>
+        <div class="right-column">
+          <article class="section-card">
+            <h2 class="section-title">Weather</h2>
 
-          <div class="weather-stack">
-            <div class="weather-card" id="depWeatherCard"></div>
-            <div class="weather-card" id="destWeatherCard"></div>
-            <div class="weather-card" id="altWeatherCard"></div>
-          </div>
-        </article>
+            <div class="weather-stack">
+              <div class="weather-card" id="depWeatherCard"></div>
+              <div class="weather-card" id="destWeatherCard"></div>
+              <div class="weather-card" id="altWeatherCard"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <h2 class="section-title">Important airport NOTAMs</h2>
+
+        <div class="notam-grid">
+          <div class="notam-card" id="depNotamsCard"></div>
+          <div class="notam-card" id="destNotamsCard"></div>
+          <div class="notam-card" id="altNotamsCard"></div>
+        </div>
       </section>
     </div>
   </div>
 
   <script>
-  const fileInput = document.getElementById("fileInput");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const errorEl = document.getElementById("error");
-  const resultsEl = document.getElementById("results");
-  const emptyStateEl = document.getElementById("emptyState");
-  const depWeatherCard = document.getElementById("depWeatherCard");
-  const destWeatherCard = document.getElementById("destWeatherCard");
-  const altWeatherCard = document.getElementById("altWeatherCard");
-  const detailsGrid = document.getElementById("detailsGrid");
-  const statusPill = document.getElementById("statusPill");
-  const statusCopy = document.getElementById("statusCopy");
+    const fileInput = document.getElementById("fileInput");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const errorEl = document.getElementById("error");
+    const resultsEl = document.getElementById("results");
+    const emptyStateEl = document.getElementById("emptyState");
+    const depWeatherCard = document.getElementById("depWeatherCard");
+    const destWeatherCard = document.getElementById("destWeatherCard");
+    const altWeatherCard = document.getElementById("altWeatherCard");
+    const depNotamsCard = document.getElementById("depNotamsCard");
+    const destNotamsCard = document.getElementById("destNotamsCard");
+    const altNotamsCard = document.getElementById("altNotamsCard");
+    const detailsGrid = document.getElementById("detailsGrid");
+    const dispatchNotesGrid = document.getElementById("dispatchNotesGrid");
+    const statusPill = document.getElementById("statusPill");
+    const statusCopy = document.getElementById("statusCopy");
 
-  const summaryFlight = document.getElementById("summaryFlight");
-  const summaryDate = document.getElementById("summaryDate");
-  const summaryRoute = document.getElementById("summaryRoute");
-  const summaryAirports = document.getElementById("summaryAirports");
-  const summarySchedule = document.getElementById("summarySchedule");
-  const summaryScheduleLocal = document.getElementById("summaryScheduleLocal");
-  const summaryOfp = document.getElementById("summaryOfp");
-  const summaryFlightTime = document.getElementById("summaryFlightTime");
-  const summaryAircraft = document.getElementById("summaryAircraft");
-  const summaryOps = document.getElementById("summaryOps");
+    const summaryFlight = document.getElementById("summaryFlight");
+    const summaryDate = document.getElementById("summaryDate");
+    const summaryRoute = document.getElementById("summaryRoute");
+    const summaryAirports = document.getElementById("summaryAirports");
+    const summarySchedule = document.getElementById("summarySchedule");
+    const summaryScheduleLocal = document.getElementById("summaryScheduleLocal");
+    const summaryOfp = document.getElementById("summaryOfp");
+    const summaryFlightTime = document.getElementById("summaryFlightTime");
+    const summaryAircraft = document.getElementById("summaryAircraft");
+    const summaryOps = document.getElementById("summaryOps");
 
-  function safeValue(value, fallback = "—") {
-    if (value === undefined || value === null || value === "") {
-      return fallback;
-    }
-    return value;
-  }
-
-  function formatFlightTime(value) {
-    const raw = safeValue(value, "").toString().trim();
-
-    if (!raw) {
-      return "—";
+    function safeValue(value, fallback = "—") {
+      if (value === undefined || value === null || value === "") {
+        return fallback;
+      }
+      return value;
     }
 
-    const match = raw.match(/^(\d{1,2}):(\d{2})$/);
-    if (!match) {
-      return raw;
+    function formatFlightTime(value) {
+      const raw = safeValue(value, "").toString().trim();
+
+      if (!raw) {
+        return "—";
+      }
+
+      const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+      if (!match) {
+        return raw;
+      }
+
+      const hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+
+      return `${hours}h ${minutes}m`;
     }
 
-    const hours = parseInt(match[1], 10);
-    const minutes = parseInt(match[2], 10);
+    function joinParts(parts, separator = " · ") {
+      return parts.filter(Boolean).join(separator) || "—";
+    }
 
-    return `${hours}h ${minutes}m`;
-  }
+    function resetUI() {
+      errorEl.textContent = "";
+      resultsEl.style.display = "none";
+      emptyStateEl.style.display = "grid";
+      detailsGrid.innerHTML = "";
+      dispatchNotesGrid.innerHTML = "";
+      depWeatherCard.innerHTML = "";
+      destWeatherCard.innerHTML = "";
+      altWeatherCard.innerHTML = "";
+      depNotamsCard.innerHTML = "";
+      destNotamsCard.innerHTML = "";
+      altNotamsCard.innerHTML = "";
+      statusPill.textContent = "Information only";
+      statusCopy.textContent = "Info only. Always verify against the full OFP.";
 
-  function joinParts(parts, separator = " · ") {
-    return parts.filter(Boolean).join(separator) || "—";
-  }
+      summaryFlight.textContent = "—";
+      summaryDate.textContent = "—";
+      summaryRoute.textContent = "—";
+      summaryAirports.textContent = "—";
+      summarySchedule.textContent = "—";
+      summaryScheduleLocal.textContent = "—";
+      summaryOfp.textContent = "—";
+      summaryFlightTime.textContent = "—";
+      summaryAircraft.textContent = "—";
+      summaryOps.textContent = "—";
+    }
 
-  function resetUI() {
-    errorEl.textContent = "";
-    resultsEl.style.display = "none";
-    emptyStateEl.style.display = "grid";
-    detailsGrid.innerHTML = "";
-    depWeatherCard.innerHTML = "";
-    destWeatherCard.innerHTML = "";
-    altWeatherCard.innerHTML = "";
+    function createDataItem(label, value) {
+      const item = document.createElement("div");
+      item.className = "data-item";
 
-    summaryFlight.textContent = "—";
-    summaryDate.textContent = "—";
-    summaryRoute.textContent = "—";
-    summaryAirports.textContent = "—";
-    summarySchedule.textContent = "—";
-    summaryScheduleLocal.textContent = "—";
-    summaryOfp.textContent = "—";
-    summaryFlightTime.textContent = "—";
-    summaryAircraft.textContent = "—";
-    summaryOps.textContent = "—";
-  }
+      const labelEl = document.createElement("div");
+      labelEl.className = "data-label";
+      labelEl.textContent = label;
 
-  function createDataItem(label, value) {
-    const item = document.createElement("div");
-    item.className = "data-item";
+      const valueEl = document.createElement("div");
+      valueEl.className = "data-value";
+      valueEl.textContent = safeValue(value);
 
-    const labelEl = document.createElement("div");
-    labelEl.className = "data-label";
-    labelEl.textContent = label;
+      item.appendChild(labelEl);
+      item.appendChild(valueEl);
 
-    const valueEl = document.createElement("div");
-    valueEl.className = "data-value";
-    valueEl.textContent = safeValue(value);
+      return item;
+    }
 
-    item.appendChild(labelEl);
-    item.appendChild(valueEl);
+    function renderSummary(strip) {
+      summaryFlight.textContent = joinParts([
+        safeValue(strip.commercial_flight, "").trim(),
+        safeValue(strip.atc_flight, "").trim()
+      ], " / ");
 
-    return item;
-  }
+      summaryDate.textContent = safeValue(strip.date_of_flight);
 
-  function renderSummary(strip) {
-    summaryFlight.textContent = joinParts([
-      safeValue(strip.commercial_flight, "").trim(),
-      safeValue(strip.atc_flight, "").trim()
-    ], " / ");
+      summaryRoute.textContent = joinParts([
+        strip.dep_iata || strip.dep_icao,
+        strip.dest_iata || strip.dest_icao
+      ], " → ");
 
-    summaryDate.textContent = safeValue(strip.date_of_flight);
+      summaryAirports.textContent = joinParts([
+        safeValue(strip.dep_rwy, "").trim() ? `DEP RWY ${strip.dep_rwy}` : "",
+        safeValue(strip.arr_rwy, "").trim() ? `ARR RWY ${strip.arr_rwy}` : ""
+      ]);
 
-    summaryRoute.textContent = joinParts([
-      strip.dep_iata || strip.dep_icao,
-      strip.dest_iata || strip.dest_icao
-    ], " → ");
+      summarySchedule.textContent = joinParts([
+        safeValue(strip.std_utc, "").trim() ? `STD ${strip.std_utc}` : "",
+        safeValue(strip.sta_utc, "").trim() ? `STA ${strip.sta_utc}` : ""
+      ]);
 
-    summaryAirports.textContent = joinParts([
-      safeValue(strip.dep_rwy, "").trim() ? `DEP RWY ${strip.dep_rwy}` : "",
-      safeValue(strip.arr_rwy, "").trim() ? `ARR RWY ${strip.arr_rwy}` : ""
-    ]);
+      summaryScheduleLocal.textContent = joinParts([
+        safeValue(strip.std_local, "").trim() ? `Local STD ${strip.std_local}` : "",
+        safeValue(strip.sta_local, "").trim() ? `Local STA ${strip.sta_local}` : ""
+      ]);
 
-    summarySchedule.textContent = joinParts([
-      safeValue(strip.std_utc, "").trim() ? `STD ${strip.std_utc}` : "",
-      safeValue(strip.sta_utc, "").trim() ? `STA ${strip.sta_utc}` : ""
-    ]);
+      summaryOfp.textContent = safeValue(strip.ofp_version);
+      summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
 
-    summaryScheduleLocal.textContent = joinParts([
-      safeValue(strip.std_local, "").trim() ? `Local STD ${strip.std_local}` : "",
-      safeValue(strip.sta_local, "").trim() ? `Local STA ${strip.sta_local}` : ""
-    ]);
+      summaryAircraft.textContent = safeValue(strip.reg);
+      summaryOps.textContent = joinParts([
+        safeValue(strip.engine_type, "").trim() ? `Engine ${strip.engine_type}` : ""
+      ]);
+    }
 
-    summaryOfp.textContent = safeValue(strip.ofp_version);
-    summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
+    function renderDetails(strip) {
+      detailsGrid.innerHTML = "";
 
-    summaryAircraft.textContent = safeValue(strip.reg);
-    summaryOps.textContent = joinParts([
-      safeValue(strip.engine_type, "").trim() ? `Engine ${strip.engine_type}` : ""
-    ]);
-  }
+      const fields = [
+        ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
+        ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
+        ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
+        ["FL range", joinParts([
+          safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
+          safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
+        ])],
+        ["Cost index", strip.cost_index],
+        ["Ramp fuel", strip.ramp_fuel],
+        ["EZFW", strip.ezfw],
+        ["ETOW", strip.etow],
+        ["ELWT", strip.elwt],
+        ["Max shear", strip.max_shear_rate],
+        ["MORA", strip.highest_mora]
+      ];
 
-  function renderDetails(strip) {
-    detailsGrid.innerHTML = "";
+      fields.forEach(([label, value]) => {
+        detailsGrid.appendChild(createDataItem(label, value));
+      });
+    }
 
-    const fields = [
-      ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
-      ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
-      ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
-      ["Flight level range", joinParts([
-        safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
-        safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
-      ])],
-      ["Cost index", strip.cost_index],
-      ["Ramp fuel", strip.ramp_fuel],
-      ["EZFW", strip.ezfw],
-      ["ETOW", strip.etow],
-      ["ELWT", strip.elwt],
-      ["Max Shear Rate", strip.max_shear_rate],
-      ["Highest MORA", strip.highest_mora]
-    ];
+    function renderDispatchNotes(notes) {
+      dispatchNotesGrid.innerHTML = "";
 
-    fields.forEach(([label, value]) => {
-      detailsGrid.appendChild(createDataItem(label, value));
-    });
-  }
+      const list = Array.isArray(notes) ? notes.filter(note => note && note.trim()) : [];
 
-  function renderWeatherCard(el, titleText, wx) {
-    el.innerHTML = "";
+      if (!list.length) {
+        dispatchNotesGrid.appendChild(createDataItem("Dispatch notes", "(none found)"));
+        return;
+      }
 
-    if (!wx) {
+      list.forEach((note) => {
+        dispatchNotesGrid.appendChild(createDataItem("Dispatch note", note));
+      });
+    }
+
+    function renderWeatherCard(el, titleText, wx) {
+      el.innerHTML = "";
+
+      if (!wx) {
+        el.innerHTML = `
+          <div class="weather-top">
+            <div>
+              <div class="weather-code">${titleText}</div>
+              <div class="weather-station">No weather data</div>
+            </div>
+          </div>
+          <div class="weather-window">No weather information returned.</div>
+        `;
+        return;
+      }
+
+      const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
+
       el.innerHTML = `
         <div class="weather-top">
           <div>
             <div class="weather-code">${titleText}</div>
-            <div class="weather-station">No weather data</div>
+            <div class="weather-station">${safeValue(wx.name)}</div>
           </div>
+          <div class="weather-code">${joinParts([wx.iata, wx.icao], " / ")}</div>
         </div>
-        <div class="weather-window">No weather information was returned for this station.</div>
+        <div class="weather-window">${safeValue(wx.window_label, "Weather window not available.")}</div>
+        <div class="wx-block">
+          <div class="wx-label">METAR</div>
+          <div class="wx-value">${safeValue(wx.metar, "(none)")}</div>
+        </div>
+        <div class="wx-block">
+          <div class="wx-label">TAF</div>
+          <div class="wx-value">${tafText || "(none)"}</div>
+        </div>
       `;
-      return;
     }
 
-    const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
+    function renderNotamCard(el, titleText, airport, items) {
+      const airportName = airport?.name || "No airport data";
+      const airportCode = [airport?.iata, airport?.icao].filter(Boolean).join(" / ");
+      const list = Array.isArray(items) ? items : [];
 
-    el.innerHTML = `
-      <div class="weather-top">
-        <div>
-          <div class="weather-code">${titleText}</div>
-          <div class="weather-station">${safeValue(wx.name)}</div>
-        </div>
-        <div class="weather-code">${joinParts([wx.iata, wx.icao], " / ")}</div>
-      </div>
-      <div class="weather-window">${safeValue(wx.window_label, "Weather window not available.")}</div>
-      <div class="wx-block">
-        <div class="wx-label">METAR</div>
-        <div class="wx-value">${safeValue(wx.metar, "(none)")}</div>
-      </div>
-      <div class="wx-block">
-        <div class="wx-label">TAF</div>
-        <div class="wx-value">${tafText || "(none)"}</div>
-      </div>
-    `;
-  }
+      function cleanNotamText(notam) {
+        let text = safeValue(notam?.raw_text, "(no text)");
+        const notamId = safeValue(notam?.notam_id, "").trim();
 
-  uploadBtn.addEventListener("click", async () => {
-    errorEl.textContent = "";
-    resultsEl.style.display = "none";
-    emptyStateEl.style.display = "grid";
-    detailsGrid.innerHTML = "";
-    depWeatherCard.innerHTML = "";
-    destWeatherCard.innerHTML = "";
-    altWeatherCard.innerHTML = "";
+        if (notamId) {
+          const escapedId = notamId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          text = text.replace(new RegExp("^" + escapedId + "\\s*", "i"), "");
+          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=COMPANY NOTAM\\s*-)", "i"), "");
+          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=-\\s*CHART NOTAM)", "i"), "");
+        }
 
-    const file = fileInput.files[0];
+        text = text.replace(
+          /^VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
+          ""
+        );
 
-    if (!file) {
-      errorEl.textContent = "Please choose a PDF file first.";
-      return;
-    }
+        text = text.replace(
+          /^-\s*(?:CHART NOTAM|COMPANY NOTAM)\s+VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
+          ""
+        );
 
-    uploadBtn.disabled = true;
-    uploadBtn.textContent = "Generating...";
-    statusPill.textContent = "Awaiting document";
-    statusCopy.textContent = "Upload an OFP PDF to generate a structured briefing with flight overview, routing, aircraft details, and available weather sections.";
+        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s*-\s*/i, "");
+        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s+/i, "");
+        text = text.replace(/^\-\s*/, "");
+        text = text.trim();
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/briefing", {
-        method: "POST",
-        body: formData
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Server error ${res.status}: ${text}`);
+        return text || "(no text)";
       }
 
-      const data = await res.json();
-      const strip = data.strip || {};
+      if (!list.length) {
+        el.innerHTML = `
+          <div class="notam-top">
+            <div>
+              <div class="notam-code">${titleText}</div>
+              <div class="notam-station">${airportName}</div>
+            </div>
+            <div class="notam-code">${airportCode || "-"}</div>
+          </div>
+          <div class="notam-empty">No important NOTAMs found.</div>
+        `;
+        return;
+      }
 
-      const availableSections = [
-        strip && Object.keys(strip).length ? "flight details" : "",
-        data.dep_weather ? "departure weather" : "",
-        data.dest_weather ? "destination weather" : "",
-        data.alt_weather ? "alternate weather" : ""
-      ].filter(Boolean);
-
-      statusCopy.textContent = availableSections.length
-        ? `This briefing includes ${availableSections.join(", ")}.`
-        : "The document was processed, but only limited briefing data was available.";
-
-      renderSummary(strip);
-      renderDetails(strip);
-      renderWeatherCard(depWeatherCard, "Departure weather", data.dep_weather);
-      renderWeatherCard(destWeatherCard, "Destination weather", data.dest_weather);
-      renderWeatherCard(altWeatherCard, "Alternate weather", data.alt_weather);
-
-      emptyStateEl.style.display = "none";
-      resultsEl.style.display = "grid";
-      statusPill.textContent = "Brief ready";
-    } catch (err) {
-      console.error(err);
-      errorEl.textContent = err.message;
-      statusPill.textContent = "Error";
-    } finally {
-      uploadBtn.disabled = false;
-      uploadBtn.textContent = "Generate Brief";
+      el.innerHTML = `
+        <div class="notam-top">
+          <div>
+            <div class="notam-code">${titleText}</div>
+            <div class="notam-station">${airportName}</div>
+          </div>
+          <div class="notam-code">${airportCode || "-"}</div>
+        </div>
+        <div class="notam-list">
+          ${list.map(notam => `
+            <div class="notam-item">
+              <div class="notam-meta">
+                <span class="notam-badge">${safeValue(notam.notam_id, "NOTAM")}</span>
+                <span class="notam-badge">${safeValue(notam.validity, "Validity unavailable")}</span>
+              </div>
+              <div class="notam-text">${cleanNotamText(notam)}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
     }
-  });
 
-  resetUI();
-</script>
+    uploadBtn.addEventListener("click", async () => {
+      errorEl.textContent = "";
+      resultsEl.style.display = "none";
+      emptyStateEl.style.display = "grid";
+      detailsGrid.innerHTML = "";
+      dispatchNotesGrid.innerHTML = "";
+      depWeatherCard.innerHTML = "";
+      destWeatherCard.innerHTML = "";
+      altWeatherCard.innerHTML = "";
+      depNotamsCard.innerHTML = "";
+      destNotamsCard.innerHTML = "";
+      altNotamsCard.innerHTML = "";
+
+      const file = fileInput.files[0];
+
+      if (!file) {
+        errorEl.textContent = "Please choose a PDF file first.";
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Generating...";
+      statusPill.textContent = "Information only";
+      statusCopy.textContent = "Info only. Always verify against the full OFP.";
+
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/briefing", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Server error ${res.status}: ${text}`);
+        }
+
+        const data = await res.json();
+        const strip = data.strip || {};
+
+        renderSummary(strip);
+        renderDetails(strip);
+        renderDispatchNotes(data.dispatch_notes);
+        renderWeatherCard(depWeatherCard, "Departure", data.dep_weather);
+        renderWeatherCard(destWeatherCard, "Destination", data.dest_weather);
+        renderWeatherCard(altWeatherCard, "Alternate", data.alt_weather);
+
+        renderNotamCard(depNotamsCard, "Departure", data.dep_weather, data.dep_notams);
+        renderNotamCard(destNotamsCard, "Destination", data.dest_weather, data.dest_notams);
+        renderNotamCard(altNotamsCard, "Alternate", data.alt_weather, data.alt_notams);
+
+        emptyStateEl.style.display = "none";
+        resultsEl.style.display = "grid";
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = err.message;
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = "Generate Brief";
+      }
+    });
+
+    resetUI();
+  </script>
 </body>
 </html>
