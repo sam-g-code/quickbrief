@@ -10,99 +10,136 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <div class="page">
-    <section class="hero">
+  <main class="app-shell">
+    <header class="hero">
       <div class="hero-top">
-        <div class="brand">
+        <div class="brand-wrap">
           <div class="brand-mark">QB</div>
-          <div class="brand-name">QuickBrief</div>
+          <div>
+            <div class="brand-kicker">QuickBrief</div>
+            <h1 class="brand-title">OFP Briefing Reader</h1>
+          </div>
         </div>
-        <div class="meta-chip">OFP parser</div>
+
+        <div class="chip">OFP parser</div>
       </div>
 
-      <div class="upload-panel">
-        <div class="upload-card">
-          <h2 class="upload-title">Upload OFP PDF</h2>
+      <div class="hero-grid">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Upload OFP PDF</h2>
+          </div>
+          <p class="panel-copy">Drop in your operational flight plan and get a clean, scannable briefing.</p>
 
-          <div class="upload-row">
-            <div class="file-wrap">
-              <input type="file" id="fileInput" accept="application/pdf" />
+          <label for="fileInput" class="file-picker">
+            <div class="file-picker-main">
+              <div class="file-picker-title" id="fileName">Choose a PDF…</div>
+              <div class="file-picker-sub">PDF up to 25 MB</div>
             </div>
+            <input type="file" id="fileInput" accept="application/pdf" hidden />
+          </label>
+
+          <div class="action-row">
             <button id="uploadBtn">Generate Brief</button>
           </div>
 
           <div id="error" class="error"></div>
-        </div>
+        </section>
 
-        <div class="status-card">
+        <aside class="panel panel-side">
           <div>
-            <h2 class="status-title">Operational use</h2>
-            <p class="status-copy" id="statusCopy">
-              Info only. Always verify against the full OFP.
+            <div class="panel-head">
+              <h2>Operational use</h2>
+            </div>
+            <p class="panel-copy">
+              Information only. Always cross-check against the full Briefing Package and Company Documentation before flight.
             </p>
           </div>
-          <div class="status-pill" id="statusPill">Information only</div>
-        </div>
+
+          <div class="warning-pill">Information only</div>
+        </aside>
       </div>
+    </header>
+
+    <section class="empty-state" id="emptyState">
+      <div class="empty-icon">✈</div>
+      <h2>Your briefing will appear here</h2>
+      <p>Upload an OFP PDF to see summary, weather and key NOTAMs in a single, scannable view.</p>
     </section>
 
-    <div class="empty-state" id="emptyState">
-      <div>
-        <h2>Briefing appears here</h2>
-        <p>Upload a PDF to view summary, weather, and important NOTAMs.</p>
-      </div>
-    </div>
-
     <div class="results" id="results">
-      <section class="summary-grid">
-        <article class="summary-card">
-          <div class="summary-label">Flight</div>
-          <div class="summary-value" id="summaryFlight">—</div>
-          <div class="summary-sub" id="summaryDate">—</div>
-        </article>
+      <section class="summary-card summary-main">
+        <div class="summary-top">
+          <div class="flight-block">
+            <div class="summary-label">Flight</div>
+            <div class="summary-flight" id="summaryFlight">—</div>
+          </div>
 
-        <article class="summary-card">
-          <div class="summary-label">Route</div>
-          <div class="summary-value" id="summaryRoute">—</div>
-          <div class="summary-sub" id="summaryAirports">—</div>
-        </article>
+          <div class="route-block">
+            <div class="route-code" id="summaryDepCode">—</div>
+            <div class="route-arrow">✈</div>
+            <div class="route-code" id="summaryDestCode">—</div>
+          </div>
 
-        <article class="summary-card">
-          <div class="summary-label">Schedule</div>
-          <div class="summary-value" id="summarySchedule">—</div>
-          <div class="summary-sub" id="summaryScheduleLocal">—</div>
-        </article>
+          <div class="date-block">
+            <div class="summary-label">Date</div>
+            <div class="summary-date" id="summaryDate">—</div>
+          </div>
+        </div>
 
-        <article class="summary-card">
-          <div class="summary-label">OFP / Time</div>
-          <div class="summary-value" id="summaryOfp">—</div>
-          <div class="summary-sub" id="summaryFlightTime">—</div>
-        </article>
-
-        <article class="summary-card">
-          <div class="summary-label">Aircraft</div>
-          <div class="summary-value" id="summaryAircraft">—</div>
-          <div class="summary-sub" id="summaryOps">—</div>
-        </article>
-      </section>
-
-      <section class="details-layout">
-        <div class="left-column">
-          <article class="section-card">
-            <h2 class="section-title">Operational details</h2>
-            <div class="data-grid data-grid-compact" id="detailsGrid"></div>
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <div class="kpi-label">STD / STA</div>
+            <div class="kpi-value" id="summarySchedule">—</div>
+            <div class="kpi-sub" id="summaryScheduleLocal">—</div>
           </article>
 
-          <article class="section-card dispatch-section">
-            <h2 class="section-title">Dispatch notes</h2>
-            <div class="data-grid dispatch-grid" id="dispatchNotesGrid"></div>
+          <article class="kpi-card">
+            <div class="kpi-label">Flight time</div>
+            <div class="kpi-value" id="summaryFlightTime">—</div>
+            <div class="kpi-sub" id="summaryFlightLevels">—</div>
+          </article>
+
+          <article class="kpi-card">
+            <div class="kpi-label">Runways</div>
+            <div class="kpi-value" id="summaryAirports">—</div>
+          </article>
+
+          <article class="kpi-card">
+            <div class="kpi-label">Aircraft</div>
+            <div class="kpi-value" id="summaryAircraft">—</div>
+            <div class="kpi-sub" id="summaryOps">—</div>
+          </article>
+
+          <article class="kpi-card">
+            <div class="kpi-label">OFP</div>
+            <div class="kpi-value" id="summaryOfp">—</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="content-left">
+          <article class="card">
+            <div class="card-head">
+              <h2>Operational details</h2>
+            </div>
+            <div class="detail-grid" id="detailsGrid"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <h2>Dispatch notes</h2>
+            </div>
+            <div class="dispatch-list" id="dispatchNotesGrid"></div>
           </article>
         </div>
 
-        <div class="right-column">
-          <article class="section-card">
-            <h2 class="section-title">Weather</h2>
-
+        <div class="content-right">
+          <article class="card">
+            <div class="card-head">
+              <h2>Weather</h2>
+            </div>
             <div class="weather-stack">
               <div class="weather-card" id="depWeatherCard"></div>
               <div class="weather-card" id="destWeatherCard"></div>
@@ -112,73 +149,89 @@
         </div>
       </section>
 
-      <section class="section-card">
-        <h2 class="section-title">Important airport NOTAMs</h2>
-
+      <article class="card">
+        <div class="card-head">
+          <h2>Important airport NOTAMs</h2>
+        </div>
         <div class="notam-grid">
           <div class="notam-card" id="depNotamsCard"></div>
           <div class="notam-card" id="destNotamsCard"></div>
           <div class="notam-card" id="altNotamsCard"></div>
         </div>
-      </section>
+      </article>
     </div>
-  </div>
+
+    <footer class="footer">QuickBrief · Built for the flight deck</footer>
+  </main>
 
   <script>
     const fileInput = document.getElementById("fileInput");
+    const fileNameEl = document.getElementById("fileName");
     const uploadBtn = document.getElementById("uploadBtn");
     const errorEl = document.getElementById("error");
     const resultsEl = document.getElementById("results");
     const emptyStateEl = document.getElementById("emptyState");
+
     const depWeatherCard = document.getElementById("depWeatherCard");
     const destWeatherCard = document.getElementById("destWeatherCard");
     const altWeatherCard = document.getElementById("altWeatherCard");
+
     const depNotamsCard = document.getElementById("depNotamsCard");
     const destNotamsCard = document.getElementById("destNotamsCard");
     const altNotamsCard = document.getElementById("altNotamsCard");
+
     const detailsGrid = document.getElementById("detailsGrid");
     const dispatchNotesGrid = document.getElementById("dispatchNotesGrid");
-    const statusPill = document.getElementById("statusPill");
-    const statusCopy = document.getElementById("statusCopy");
 
     const summaryFlight = document.getElementById("summaryFlight");
+    const summaryDepCode = document.getElementById("summaryDepCode");
+    const summaryDestCode = document.getElementById("summaryDestCode");
     const summaryDate = document.getElementById("summaryDate");
-    const summaryRoute = document.getElementById("summaryRoute");
     const summaryAirports = document.getElementById("summaryAirports");
     const summarySchedule = document.getElementById("summarySchedule");
     const summaryScheduleLocal = document.getElementById("summaryScheduleLocal");
     const summaryOfp = document.getElementById("summaryOfp");
     const summaryFlightTime = document.getElementById("summaryFlightTime");
+    const summaryFlightLevels = document.getElementById("summaryFlightLevels");
     const summaryAircraft = document.getElementById("summaryAircraft");
     const summaryOps = document.getElementById("summaryOps");
 
     function safeValue(value, fallback = "—") {
-      if (value === undefined || value === null || value === "") {
-        return fallback;
-      }
+      if (value === undefined || value === null || value === "") return fallback;
       return value;
-    }
-
-    function formatFlightTime(value) {
-      const raw = safeValue(value, "").toString().trim();
-
-      if (!raw) {
-        return "—";
-      }
-
-      const match = raw.match(/^(\d{1,2}):(\d{2})$/);
-      if (!match) {
-        return raw;
-      }
-
-      const hours = parseInt(match[1], 10);
-      const minutes = parseInt(match[2], 10);
-
-      return `${hours}h ${minutes}m`;
     }
 
     function joinParts(parts, separator = " · ") {
       return parts.filter(Boolean).join(separator) || "—";
+    }
+
+    function formatFlightTime(value) {
+      const raw = safeValue(value, "").toString().trim();
+      if (!raw) return "—";
+      const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+      if (!match) return raw;
+      return `${parseInt(match[1], 10)}h ${parseInt(match[2], 10)}m`;
+    }
+
+    function cleanNotamText(notam) {
+      let text = safeValue(notam?.raw_text, "(no text)");
+      const notamId = safeValue(notam?.notam_id, "").trim();
+
+      if (notamId) {
+        const escapedId = notamId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        text = text.replace(new RegExp("^" + escapedId + "\\s*", "i"), "");
+        text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=COMPANY NOTAM\\s*-)", "i"), "");
+        text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=-\\s*CHART NOTAM)", "i"), "");
+      }
+
+      text = text.replace(/^VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i, "");
+      text = text.replace(/^-?\s*(?:CHART NOTAM|COMPANY NOTAM)\s+VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i, "");
+      text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s*-\s*/i, "");
+      text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s+/i, "");
+      text = text.replace(/^\-\s*/, "");
+      text = text.trim();
+
+      return text || "(no text)";
     }
 
     function resetUI() {
@@ -193,36 +246,28 @@
       depNotamsCard.innerHTML = "";
       destNotamsCard.innerHTML = "";
       altNotamsCard.innerHTML = "";
-      statusPill.textContent = "Information only";
-      statusCopy.textContent = "Info only. Always verify against the full OFP.";
 
       summaryFlight.textContent = "—";
+      summaryDepCode.textContent = "—";
+      summaryDestCode.textContent = "—";
       summaryDate.textContent = "—";
-      summaryRoute.textContent = "—";
       summaryAirports.textContent = "—";
       summarySchedule.textContent = "—";
       summaryScheduleLocal.textContent = "—";
       summaryOfp.textContent = "—";
       summaryFlightTime.textContent = "—";
+      summaryFlightLevels.textContent = "—";
       summaryAircraft.textContent = "—";
       summaryOps.textContent = "—";
     }
 
-    function createDataItem(label, value) {
+    function createDetailItem(label, value) {
       const item = document.createElement("div");
-      item.className = "data-item";
-
-      const labelEl = document.createElement("div");
-      labelEl.className = "data-label";
-      labelEl.textContent = label;
-
-      const valueEl = document.createElement("div");
-      valueEl.className = "data-value";
-      valueEl.textContent = safeValue(value);
-
-      item.appendChild(labelEl);
-      item.appendChild(valueEl);
-
+      item.className = "detail-item";
+      item.innerHTML = `
+        <div class="detail-label">${label}</div>
+        <div class="detail-value">${safeValue(value)}</div>
+      `;
       return item;
     }
 
@@ -232,35 +277,34 @@
         safeValue(strip.atc_flight, "").trim()
       ], " / ");
 
+      summaryDepCode.textContent = strip.dep_iata || strip.dep_icao || "—";
+      summaryDestCode.textContent = strip.dest_iata || strip.dest_icao || "—";
       summaryDate.textContent = safeValue(strip.date_of_flight);
 
-      summaryRoute.textContent = joinParts([
-        strip.dep_iata || strip.dep_icao,
-        strip.dest_iata || strip.dest_icao
-      ], " → ");
+      summarySchedule.textContent = `${joinParts([
+        safeValue(strip.std_utc, "").trim(),
+        safeValue(strip.sta_utc, "").trim()
+      ], " → ")} UTC`;
+
+      summaryScheduleLocal.textContent = `${joinParts([
+        safeValue(strip.std_local, "").trim(),
+        safeValue(strip.sta_local, "").trim()
+      ], " · ")} Local`;
+
+      summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
+      summaryFlightLevels.textContent = joinParts([
+        safeValue(strip.fl_min, "").trim(),
+        safeValue(strip.fl_max, "").trim()
+      ], "–");
 
       summaryAirports.textContent = joinParts([
-        safeValue(strip.dep_rwy, "").trim() ? `DEP RWY ${strip.dep_rwy}` : "",
-        safeValue(strip.arr_rwy, "").trim() ? `ARR RWY ${strip.arr_rwy}` : ""
+        safeValue(strip.dep_rwy, "").trim() ? `DEP ${strip.dep_rwy}` : "",
+        safeValue(strip.arr_rwy, "").trim() ? `ARR ${strip.arr_rwy}` : ""
       ]);
-
-      summarySchedule.textContent = joinParts([
-        safeValue(strip.std_utc, "").trim() ? `STD ${strip.std_utc}` : "",
-        safeValue(strip.sta_utc, "").trim() ? `STA ${strip.sta_utc}` : ""
-      ]);
-
-      summaryScheduleLocal.textContent = joinParts([
-        safeValue(strip.std_local, "").trim() ? `Local STD ${strip.std_local}` : "",
-        safeValue(strip.sta_local, "").trim() ? `Local STA ${strip.sta_local}` : ""
-      ]);
-
-      summaryOfp.textContent = safeValue(strip.ofp_version);
-      summaryFlightTime.textContent = formatFlightTime(strip.flight_time);
 
       summaryAircraft.textContent = safeValue(strip.reg);
-      summaryOps.textContent = joinParts([
-        safeValue(strip.engine_type, "").trim() ? `Engine ${strip.engine_type}` : ""
-      ]);
+      summaryOps.textContent = safeValue(strip.engine_type);
+      summaryOfp.textContent = safeValue(strip.ofp_version);
     }
 
     function renderDetails(strip) {
@@ -270,51 +314,58 @@
         ["Departure", joinParts([strip.dep_name, strip.dep_icao, strip.dep_iata], " / ")],
         ["Destination", joinParts([strip.dest_name, strip.dest_icao, strip.dest_iata], " / ")],
         ["Alternate", joinParts([strip.alt_name, strip.alt_icao, strip.alt_iata], " / ")],
-        ["FL range", joinParts([
-          safeValue(strip.fl_min, "").trim() ? `Min ${strip.fl_min}` : "",
-          safeValue(strip.fl_max, "").trim() ? `Max ${strip.fl_max}` : ""
-        ])],
-        ["Cost index", strip.cost_index],
         ["Ramp fuel", strip.ramp_fuel],
         ["EZFW", strip.ezfw],
         ["ETOW", strip.etow],
         ["ELWT", strip.elwt],
         ["Max shear", strip.max_shear_rate],
-        ["MORA", strip.highest_mora]
+        ["MORA", strip.highest_mora],
+        ["Cost index", strip.cost_index]
       ];
 
-      fields.forEach(([label, value]) => {
-        detailsGrid.appendChild(createDataItem(label, value));
-      });
+      fields.forEach(([label, value]) => detailsGrid.appendChild(createDetailItem(label, value)));
     }
 
     function renderDispatchNotes(notes) {
       dispatchNotesGrid.innerHTML = "";
 
-      const list = Array.isArray(notes) ? notes.filter(note => note && note.trim()) : [];
+      const list = Array.isArray(notes) ? notes.filter((note) => note && note.trim()) : [];
 
       if (!list.length) {
-        dispatchNotesGrid.appendChild(createDataItem("Dispatch notes", "(none found)"));
+        dispatchNotesGrid.innerHTML = `<div class="dispatch-empty">No dispatch notes.</div>`;
         return;
       }
 
-      list.forEach((note) => {
-        dispatchNotesGrid.appendChild(createDataItem("Dispatch note", note));
+      list.forEach((note, index) => {
+        const item = document.createElement("div");
+        item.className = "dispatch-item";
+        item.innerHTML = `
+          <div class="dispatch-num">${index + 1}</div>
+          <div class="dispatch-text">${note}</div>
+        `;
+        dispatchNotesGrid.appendChild(item);
       });
     }
 
-    function renderWeatherCard(el, titleText, wx) {
-      el.innerHTML = "";
-
+    function renderWeatherCard(el, titleText, wx, toneClass) {
       if (!wx) {
         el.innerHTML = `
-          <div class="weather-top">
+          <div class="weather-head">
             <div>
-              <div class="weather-code">${titleText}</div>
-              <div class="weather-station">No weather data</div>
+              <span class="weather-badge ${toneClass}">${titleText}</span>
+              <div class="weather-station">—</div>
             </div>
+            <div class="weather-code">—</div>
           </div>
           <div class="weather-window">No weather information returned.</div>
+          <div class="wx-block">
+            <div class="wx-label">METAR</div>
+            <div class="wx-value">(none)</div>
+          </div>
+          <div class="wx-block">
+            <div class="wx-label">TAF</div>
+            <div class="wx-value">(none)</div>
+          </div>
         `;
         return;
       }
@@ -322,14 +373,14 @@
       const tafText = Array.isArray(wx.taf) ? wx.taf.join(" ") : safeValue(wx.taf, "(none)");
 
       el.innerHTML = `
-        <div class="weather-top">
+        <div class="weather-head">
           <div>
-            <div class="weather-code">${titleText}</div>
+            <span class="weather-badge ${toneClass}">${titleText}</span>
             <div class="weather-station">${safeValue(wx.name)}</div>
           </div>
           <div class="weather-code">${joinParts([wx.iata, wx.icao], " / ")}</div>
         </div>
-        <div class="weather-window">${safeValue(wx.window_label, "Weather window not available.")}</div>
+        <div class="weather-window">${safeValue(wx.window_label, "")}</div>
         <div class="wx-block">
           <div class="wx-label">METAR</div>
           <div class="wx-value">${safeValue(wx.metar, "(none)")}</div>
@@ -342,67 +393,38 @@
     }
 
     function renderNotamCard(el, titleText, airport, items) {
-      const airportName = airport?.name || "No airport data";
+      const airportName = airport?.name || "—";
       const airportCode = [airport?.iata, airport?.icao].filter(Boolean).join(" / ");
       const list = Array.isArray(items) ? items : [];
 
-      function cleanNotamText(notam) {
-        let text = safeValue(notam?.raw_text, "(no text)");
-        const notamId = safeValue(notam?.notam_id, "").trim();
-
-        if (notamId) {
-          const escapedId = notamId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          text = text.replace(new RegExp("^" + escapedId + "\\s*", "i"), "");
-          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=COMPANY NOTAM\\s*-)", "i"), "");
-          text = text.replace(new RegExp("\\b" + escapedId + "\\b\\s*(?=-\\s*CHART NOTAM)", "i"), "");
-        }
-
-        text = text.replace(
-          /^VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
-          ""
-        );
-
-        text = text.replace(
-          /^-\s*(?:CHART NOTAM|COMPANY NOTAM)\s+VALID:?\s*\d{10}\s*-\s*(?:\d{10}|UFN|PERM)(?:\s+EST)?\s*/i,
-          ""
-        );
-
-        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s*-\s*/i, "");
-        text = text.replace(/^(?:CHART NOTAM|COMPANY NOTAM)\s+/i, "");
-        text = text.replace(/^\-\s*/, "");
-        text = text.trim();
-
-        return text || "(no text)";
-      }
-
       if (!list.length) {
         el.innerHTML = `
-          <div class="notam-top">
+          <div class="notam-head">
             <div>
-              <div class="notam-code">${titleText}</div>
+              <div class="notam-label">${titleText}</div>
               <div class="notam-station">${airportName}</div>
             </div>
-            <div class="notam-code">${airportCode || "-"}</div>
+            <div class="notam-code">${airportCode || "—"}</div>
           </div>
-          <div class="notam-empty">No important NOTAMs found.</div>
+          <div class="dispatch-empty">No important NOTAMs found.</div>
         `;
         return;
       }
 
       el.innerHTML = `
-        <div class="notam-top">
+        <div class="notam-head">
           <div>
-            <div class="notam-code">${titleText}</div>
+            <div class="notam-label">${titleText}</div>
             <div class="notam-station">${airportName}</div>
           </div>
-          <div class="notam-code">${airportCode || "-"}</div>
+          <div class="notam-code">${airportCode || "—"}</div>
         </div>
         <div class="notam-list">
-          ${list.map(notam => `
+          ${list.map((notam) => `
             <div class="notam-item">
               <div class="notam-meta">
                 <span class="notam-badge">${safeValue(notam.notam_id, "NOTAM")}</span>
-                <span class="notam-badge">${safeValue(notam.validity, "Validity unavailable")}</span>
+                <span class="notam-badge warning">${safeValue(notam.validity, "—")}</span>
               </div>
               <div class="notam-text">${cleanNotamText(notam)}</div>
             </div>
@@ -411,19 +433,12 @@
       `;
     }
 
+    fileInput.addEventListener("change", (e) => {
+      fileNameEl.textContent = e.target.files?.[0]?.name || "Choose a PDF…";
+    });
+
     uploadBtn.addEventListener("click", async () => {
       errorEl.textContent = "";
-      resultsEl.style.display = "none";
-      emptyStateEl.style.display = "grid";
-      detailsGrid.innerHTML = "";
-      dispatchNotesGrid.innerHTML = "";
-      depWeatherCard.innerHTML = "";
-      destWeatherCard.innerHTML = "";
-      altWeatherCard.innerHTML = "";
-      depNotamsCard.innerHTML = "";
-      destNotamsCard.innerHTML = "";
-      altNotamsCard.innerHTML = "";
-
       const file = fileInput.files[0];
 
       if (!file) {
@@ -432,9 +447,9 @@
       }
 
       uploadBtn.disabled = true;
-      uploadBtn.textContent = "Generating...";
-      statusPill.textContent = "Information only";
-      statusCopy.textContent = "Info only. Always verify against the full OFP.";
+      uploadBtn.textContent = "Generating…";
+      resultsEl.style.display = "none";
+      emptyStateEl.style.display = "grid";
 
       try {
         const formData = new FormData();
@@ -445,9 +460,13 @@
           body: formData
         });
 
+        const contentType = res.headers.get("content-type") || "";
+
         if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Server error ${res.status}: ${text}`);
+          const message = contentType.includes("application/json")
+            ? ((await res.json())?.error ?? `API ${res.status}`)
+            : await res.text();
+          throw new Error(message || `API ${res.status}`);
         }
 
         const data = await res.json();
@@ -456,9 +475,9 @@
         renderSummary(strip);
         renderDetails(strip);
         renderDispatchNotes(data.dispatch_notes);
-        renderWeatherCard(depWeatherCard, "Departure", data.dep_weather);
-        renderWeatherCard(destWeatherCard, "Destination", data.dest_weather);
-        renderWeatherCard(altWeatherCard, "Alternate", data.alt_weather);
+        renderWeatherCard(depWeatherCard, "Departure", data.dep_weather, "primary");
+        renderWeatherCard(destWeatherCard, "Destination", data.dest_weather, "accent");
+        renderWeatherCard(altWeatherCard, "Alternate", data.alt_weather, "muted");
 
         renderNotamCard(depNotamsCard, "Departure", data.dep_weather, data.dep_notams);
         renderNotamCard(destNotamsCard, "Destination", data.dest_weather, data.dest_notams);
@@ -467,8 +486,7 @@
         emptyStateEl.style.display = "none";
         resultsEl.style.display = "grid";
       } catch (err) {
-        console.error(err);
-        errorEl.textContent = err.message;
+        errorEl.textContent = err instanceof Error ? err.message : "Failed to generate briefing.";
       } finally {
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Generate Brief";
