@@ -124,7 +124,7 @@ function QuickBrief() {
       const fd = new FormData();
       fd.append("file", file);
 
-      const res = await fetch("http://127.0.0.1:5000/api/briefing", {
+      const res = await fetch("https://quickbrief-yox8.onrender.com", {
         method: "POST",
         body: fd,
       });
